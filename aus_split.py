@@ -52,6 +52,11 @@ def label_timestamps_with_segments(au_df: pd.DataFrame, segments_df: pd.DataFram
 
     # New first column "speaker" using the matched segment speaker labels
     out.insert(0, "speaker", speakers[idx[valid_timestamp]])
+    # Convert DAIC-WOZ names to Listening (Ellie) and Speaking (Participant)
+    out["speaker"] = out["speaker"].replace({
+        "Ellie": "Listening",
+        "Participant": "Speaking",
+    })
 
     # Restore the original timestamp string to avoid formatting changes
     out["timestamp"] = out["timestamp_raw"]
