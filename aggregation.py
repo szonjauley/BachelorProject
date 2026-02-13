@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import argparse
 
 
 def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
@@ -133,3 +134,40 @@ def main(base_folder, speaker="all", confidence=0.9):
     print(group_file)
 
     return combined, person_stats, group_stats
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Aggregate AU scores at person and group level."
+    )
+
+    parser.add_argument(
+        "--folder",
+        type=str,
+        required=True,
+        help="Path to base folder containing person directories"
+    )
+
+    parser.add_argument(
+        "--speaker",
+        type=str,
+        default="all",
+        choices=["all", "listening", "speaking"],
+        help="Speaker filter"
+    )
+
+    parser.add_argument(
+        "--confidence",
+        type=float,
+        default=0.9,
+        help="Minimum confidence threshold"
+    )
+
+    args = parser.parse_args()
+
+    main(
+        base_folder=args.folder,
+        speaker=args.speaker,
+        confidence=args.confidence
+    )
+
