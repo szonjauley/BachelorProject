@@ -79,20 +79,23 @@ def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
     # Keep only the mean columns
     mean_cols = [c for c in person_stats.columns if c.endswith("_mean")]
 
-    agg_dict = {}
+    all_stats = {}
+
     for col in mean_cols:
         base_name = col[:-5]  # strip "_mean"
-        agg_dict.update({
-            f"{base_name}_group_mean": (col, "mean"),
-            f"{base_name}_group_std": (col, "std"),
-            f"{base_name}_group_median": (col, "median"),
-            f"{base_name}_group_q25": (col, lambda x: x.quantile(0.25)),
-            f"{base_name}_group_q75": (col, lambda x: x.quantile(0.75)),
-            f"{base_name}_group_min": (col, "min"),
-            f"{base_name}_group_max": (col, "max"),
-        })
+        stats = {
+            f"{base_name}_group_mean": person_stats[col].mean(),
+            f"{base_name}_group_std": person_stats[col].std(),
+            f"{base_name}_group_median": person_stats[col].median(),
+            f"{base_name}_group_q25": person_stats[col].quantile(0.25),
+            f"{base_name}_group_q75": person_stats[col].quantile(0.75),
+            f"{base_name}_group_min": person_stats[col].min(),
+            f"{base_name}_group_max": person_stats[col].max(),
+        }
 
-    group_stats = person_stats.agg(**agg_dict)
+        all_stats.update(stats)
+
+    group_stats = pd.DataFrame(all_stats, index=[0])
 
     return group_stats
 
