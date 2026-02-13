@@ -50,22 +50,60 @@ def compute_person_stats(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame
         (data["success"] == 1)
     ]
 
-    numeric_cols = data.select_dtypes(include=np.number).columns
-
-    drop_cols = {
-        "frame", "timestamp", "confidence", "success",
-        "AU04_c", "AU12_c", "AU15_c", "AU23_c", "AU28_c", "AU45_c"
-    }
-
-    au_cols = [c for c in numeric_cols if c not in drop_cols]
+    au_cols = [c for c in data.columns if c.startswith("AU") and c.endswith("_r")]
 
     stats = (
         data
         .groupby("person_ID")[au_cols]
-        .agg(["mean", "std"])
+        .agg(
+            mean="mean",
+            std="std",
+            median="median",
+            q25=lambda x: x.quantile(0.25),
+            q75=lambda x: x.quantile(0.75),
+            min="min",
+            max="max"
+        )
     )
 
     # Flatten MultiIndex columns
     stats.columns = [f"{au}_{stat}" for au, stat in stats.columns]
 
     return stats
+
+
+def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
+    """
+    Takes person level stats and computes population-level statistics from person-level means
+    Prevents participants with more frames from biasing results
+    """
+
+    # Keep only the mean columns
+    mean_cols = [c for c in person_stats.columns if c.endswith("_mean")]
+
+    group_stats = (
+        person_stats[mean_cols]
+        .agg(
+            group_mean="mean",
+            group_std="std",
+            group_median="median",
+            group_q25=lambda x: x.quantile(0.25),
+            group_q75=lambda x: x.quantile(0.75),
+            group_min="min",
+            group_max="max"
+        )
+        .T
+    )
+
+    group_stats.columns = [
+        "group_mean",
+        "group_std",
+        "group_median",
+        "group_q25",
+        "group_q75",
+        "group_min",
+        "group_max"
+    ]
+
+    return group_stats
+
