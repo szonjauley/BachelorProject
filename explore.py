@@ -40,7 +40,7 @@ def read_personal_file(file, speaker="all"):
 def get_personal_average(data: pd.DataFrame, confidence: float = 0.7) -> pd.Series:
     """
     Takes a person's AU scores over the entire video, filters them for the specified confidence and averages over the accepted frames
-    Returns an average for each AU score as well as the number of frames accepted
+    Returns an average for each AU score
     """
     confident_data = data[
         (data["confidence"] > confidence) & 
@@ -50,7 +50,7 @@ def get_personal_average(data: pd.DataFrame, confidence: float = 0.7) -> pd.Seri
     au_scores = confident_data.select_dtypes(include=np.number)
 
     au_scores = au_scores.drop(
-        columns=["speaker", "frame", "timestamp", "confidence", "success"],
+        columns=["speaker", "frame", "timestamp", "confidence", "success", "AU04_c", "AU12_c", "AU15_C", "AU23_c", "AU28_c", "AU45_C"],
         errors="ignore"
     )
 
@@ -116,4 +116,4 @@ if __name__ == "__main__":
 
     
 
-#run it like: python explore.py --base_folder(required) folder path --output_csv(optional) output_name.csv --speaker(optional) speaking
+#run it like: python explore.py --folder(required) folder path --output_csv(optional) output_name.csv --speaker(optional) speaking
