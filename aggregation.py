@@ -107,3 +107,29 @@ def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
 
     return group_stats
 
+def main(base_folder, speaker="all", confidence=0.9):
+
+    print("Loading data...")
+    combined = load_all_data(base_folder, speaker)
+
+    print("Computing person-level statistics...")
+    person_stats = compute_person_stats(combined, confidence)
+
+    print("Computing group-level statistics...")
+    group_stats = compute_group_stats(person_stats)
+
+    # Save
+    combined_file = "combined_AUs_labeled.csv"
+    person_file = "AU_stats_person_level.csv"
+    group_file = "AU_stats_group_level.csv"
+
+    combined.to_csv(combined_file)
+    person_stats.to_csv(person_file)
+    group_stats.to_csv(group_file)
+
+    print(f"\nSaved:")
+    print(combined_file)
+    print(person_file)
+    print(group_file)
+
+    return combined, person_stats, group_stats
