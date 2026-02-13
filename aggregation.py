@@ -53,22 +53,19 @@ def compute_person_stats(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame
 
     au_cols = [c for c in data.columns if c.startswith("AU") and c.endswith("_r")]
 
-    stats = (
-        data
-        .groupby("person_ID")[au_cols]
-        .agg(
-            mean="mean",
-            std="std",
-            median="median",
-            q25=lambda x: x.quantile(0.25),
-            q75=lambda x: x.quantile(0.75),
-            min="min",
-            max="max"
-        )
-    )
+    agg_dict = {}
+    for au in au_cols:
+        agg_dict.update({
+            f"{au}_mean": (au, "mean"),
+            f"{au}_std": (au, "std"),
+            f"{au}_median": (au, "median"),
+            f"{au}_q25": (au, lambda x: x.quantile(0.25)),
+            f"{au}_q75": (au, lambda x: x.quantile(0.75)),
+            f"{au}_min": (au, "min"),
+            f"{au}_max": (au, "max"),
+        })
 
-    # Flatten MultiIndex columns
-    stats.columns = [f"{au}_{stat}" for au, stat in stats.columns]
+    stats = data.groupby("person_ID").agg(**agg_dict)
 
     return stats
 
@@ -82,29 +79,20 @@ def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
     # Keep only the mean columns
     mean_cols = [c for c in person_stats.columns if c.endswith("_mean")]
 
-    group_stats = (
-        person_stats[mean_cols]
-        .agg(
-            group_mean="mean",
-            group_std="std",
-            group_median="median",
-            group_q25=lambda x: x.quantile(0.25),
-            group_q75=lambda x: x.quantile(0.75),
-            group_min="min",
-            group_max="max"
-        )
-        .T
-    )
+    agg_dict = {}
+    for col in mean_cols:
+        base_name = col[:-5]  # strip "_mean"
+        agg_dict.update({
+            f"{base_name}_group_mean": (col, "mean"),
+            f"{base_name}_group_std": (col, "std"),
+            f"{base_name}_group_median": (col, "median"),
+            f"{base_name}_group_q25": (col, lambda x: x.quantile(0.25)),
+            f"{base_name}_group_q75": (col, lambda x: x.quantile(0.75)),
+            f"{base_name}_group_min": (col, "min"),
+            f"{base_name}_group_max": (col, "max"),
+        })
 
-    group_stats.columns = [
-        "group_mean",
-        "group_std",
-        "group_median",
-        "group_q25",
-        "group_q75",
-        "group_min",
-        "group_max"
-    ]
+    group_stats = person_stats.agg(**agg_dict)
 
     return group_stats
 
