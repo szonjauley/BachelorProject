@@ -77,7 +77,7 @@ def cleanup_folder_keep_only(folder: str, keep_paths):
     Delete EVERYTHING inside folder except the files listed in keep_paths.
     Also removes empty directories afterward.
     """
-    keep_abs = set(os.path.abspath(p) for p in keep_paths)
+    keep_abs = set(os.path.abspath(p) for p in keep_paths if p)
 
     deleted = 0
     for root, dirs, files in os.walk(folder, topdown=False):
@@ -129,6 +129,9 @@ def main():
         transcripts = glob.glob(os.path.join(folder, "**", "*_TRANSCRIPT.csv"), recursive=True)
         aus_files = glob.glob(os.path.join(folder, "**", "*_CLNF_AUs.txt"), recursive=True)
 
+        # NEW: keep gaze file like 301_CLNF_gaze.txt (number varies)
+        gaze_files = glob.glob(os.path.join(folder, "**", "*_CLNF_gaze.txt"), recursive=True)
+
         if not transcripts:
             print(" - No *_TRANSCRIPT.csv found, skipping.")
             continue
@@ -138,6 +141,7 @@ def main():
 
         transcript = transcripts[0]
         aus_file = aus_files[0]
+        gaze_file = gaze_files[0] if gaze_files else None
 
         segments_out = os.path.join(folder, f"{prefix}_speaker_segments.csv")
         labeled_out = os.path.join(folder, f"{prefix}_CLNF_AUs_labeled.csv")
@@ -148,14 +152,20 @@ def main():
         print("Done:", folder_name)
         print("Kept core files + outputs, now cleaning up...")
 
+        keep_list = [transcript, aus_file, segments_out, labeled_out]
+        if gaze_file:
+            keep_list.append(gaze_file)
+
         cleanup_folder_keep_only(
             folder,
-            keep_paths=[transcript, aus_file, segments_out, labeled_out],
+            keep_paths=keep_list,
         )
 
         print("Final kept files:")
         print(" -", transcript)
         print(" -", aus_file)
+        if gaze_file:
+            print(" -", gaze_file)
         print(" -", segments_out)
         print(" -", labeled_out)
 
