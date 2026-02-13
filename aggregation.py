@@ -1,5 +1,7 @@
 import pandas as pd
+import numpy as np
 from pathlib import Path
+
 
 def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
     """
@@ -35,3 +37,35 @@ def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
         data = data[data["speaker"] == "Speaking"]
 
     return data
+
+
+def compute_person_stats(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
+    """
+    Takes the combined data, filters it for the specified confidence and aggregates over the accepted frames
+    Returns the stats for each person
+    """
+
+    data = data[
+        (data["confidence"] > confidence) &
+        (data["success"] == 1)
+    ]
+
+    numeric_cols = data.select_dtypes(include=np.number).columns
+
+    drop_cols = {
+        "frame", "timestamp", "confidence", "success",
+        "AU04_c", "AU12_c", "AU15_c", "AU23_c", "AU28_c", "AU45_c"
+    }
+
+    au_cols = [c for c in numeric_cols if c not in drop_cols]
+
+    stats = (
+        data
+        .groupby("person_ID")[au_cols]
+        .agg(["mean", "std"])
+    )
+
+    # Flatten MultiIndex columns
+    stats.columns = [f"{au}_{stat}" for au, stat in stats.columns]
+
+    return stats
