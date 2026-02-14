@@ -39,6 +39,22 @@ def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
 
     return data
 
+def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
+    """
+    Takes the combined data, filters it for the specified confidence and successful frames and removes all non-AU_r columns
+    """
+    data = data[
+        (data["confidence"] > confidence) &
+        (data["success"] == 1)
+    ]
+
+    non_au_cols = ["speaker", "frame", "timestamp", "confidence", "success", 
+                   "AU04_c", "AU12_c", "AU15_c", "AU23_c", "AU28_c", "AU45_c"]
+    data = data.drop(columns=non_au_cols)
+    data = data.set_index("person_ID")
+
+    return data
+
 
 def compute_person_stats(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
     """
@@ -104,6 +120,9 @@ def main(base_folder, speaker="all", confidence=0.9):
     print("Loading data...")
     combined = load_all_data(base_folder, speaker)
 
+    print("Cleaning data...")
+    cleaned = clean_data(combined, confidence)
+
     print("Computing person-level statistics...")
     person_stats = compute_person_stats(combined, confidence)
 
@@ -111,20 +130,23 @@ def main(base_folder, speaker="all", confidence=0.9):
     group_stats = compute_group_stats(person_stats)
 
     # Save
-    combined_file = "combined_AUs_labeled.csv"
+    combined_file = f"combined_AUs_labeled_{speaker}.csv"
+    cleaned_file = f"cleaned_AUs_labeled_{speaker}_{confidence}.csv"
     person_file = "AU_stats_person_level.csv"
     group_file = "AU_stats_group_level.csv"
 
-    combined.to_csv(combined_file)
+    combined.to_csv(combined_file, index=False)
+    cleaned.to_csv(cleaned_file)
     person_stats.to_csv(person_file)
     group_stats.to_csv(group_file)
 
     print(f"\nSaved:")
     print(combined_file)
+    print(cleaned_file)
     print(person_file)
     print(group_file)
 
-    return combined, person_stats, group_stats
+    return combined, cleaned, person_stats, group_stats
 
 if __name__ == "__main__":
 
