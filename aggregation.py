@@ -56,32 +56,23 @@ def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
     return data
 
 
-def compute_person_stats(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
+def compute_person_stats(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Takes the combined data, filters it for the specified confidence and aggregates over the accepted frames
-    Returns the stats for each person
+    Takes the cleaned data and returns personal level stats indexed by person_ID
     """
 
-    data = data[
-        (data["confidence"] > confidence) &
-        (data["success"] == 1)
-    ]
+    grouped = data.groupby(level="person_ID")
 
-    au_cols = [c for c in data.columns if c.startswith("AU") and c.endswith("_r")]
+    q25 = lambda x: x.quantile(0.25)
+    q25.__name__ = "q25"
 
-    agg_dict = {}
-    for au in au_cols:
-        agg_dict.update({
-            f"{au}_mean": (au, "mean"),
-            f"{au}_std": (au, "std"),
-            f"{au}_median": (au, "median"),
-            f"{au}_q25": (au, lambda x: x.quantile(0.25)),
-            f"{au}_q75": (au, lambda x: x.quantile(0.75)),
-            f"{au}_min": (au, "min"),
-            f"{au}_max": (au, "max"),
-        })
+    q75 = lambda x: x.quantile(0.75)
+    q75.__name__ = "q75"
 
-    stats = data.groupby("person_ID").agg(**agg_dict)
+    stats = grouped.agg(["min", "max", "median", "mean", "std", q25, q75])
+
+    # flatten columns
+    stats.columns = [f"{au}_{metric}" for au, metric in stats.columns]
 
     return stats
 
@@ -124,7 +115,7 @@ def main(base_folder, speaker="all", confidence=0.9):
     cleaned = clean_data(combined, confidence)
 
     print("Computing person-level statistics...")
-    person_stats = compute_person_stats(combined, confidence)
+    person_stats = compute_person_stats(cleaned)
 
     print("Computing group-level statistics...")
     group_stats = compute_group_stats(person_stats)
