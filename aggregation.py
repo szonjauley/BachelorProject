@@ -42,6 +42,7 @@ def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
 def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
     """
     Takes the combined data, filters it for the specified confidence and successful frames and removes all non-AU_r columns
+    Returns clean data indexed by person_ID
     """
     data = data[
         (data["confidence"] > confidence) &
@@ -71,10 +72,20 @@ def compute_person_stats(data: pd.DataFrame) -> pd.DataFrame:
 
     stats = grouped.agg(["min", "max", "median", "mean", "std", q25, q75])
 
-    # flatten columns
-    stats.columns = [f"{au}_{metric}" for au, metric in stats.columns]
+    # Flatten columns
+    wide = stats.copy()
+    wide.columns = [f"{au}_{metric}" for au, metric in wide.columns]
 
-    return stats
+    # Unpivot columns
+    long = (
+        stats
+        .stack([0, 1], future_stack=True)
+        .rename("value")
+        .rename_axis(["person_ID", "AU", "metric"])
+        .reset_index()
+    )
+
+    return stats, wide, long
 
 
 def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
