@@ -4,7 +4,7 @@ from pathlib import Path
 import argparse
 
 
-def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
+def load_all_data(base_folder:Path, depression_file:Path, speaker:str="all", depressed:str="all") -> pd.DataFrame:
     """
     Loads all AU csv files into one dataframe with a person_ID column.
     Takes folder path and speaker mode as input and returns dataframe with additional ID column
@@ -31,11 +31,23 @@ def load_all_data(base_folder:Path, speaker:str="all") -> pd.DataFrame:
 
     data = pd.concat(dfs, ignore_index=True)
 
+    depression_values = pd.read_csv(depression_file)
+
+    labelmap = depression_values.set_index("Participant_ID")["PHQ8_Binary"]
+    labelmap.index = labelmap.index.astype(str)
+    data["depression"] = data["person_ID"].map(labelmap)
+
     # Speaker mode filter 
     if speaker == "listening":
         data = data[data["speaker"] == "Listening"]
     elif speaker == "speaking":
         data = data[data["speaker"] == "Speaking"]
+
+    # Depression group filter
+    if depressed == "yes":
+        data = data[data["depression"] == 1]
+    elif depressed == "no":
+        data = data[data["depression"] == 0]
 
     return data
 
@@ -49,7 +61,7 @@ def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
         (data["success"] == 1)
     ]
 
-    non_au_cols = ["speaker", "frame", "timestamp", "confidence", "success", 
+    non_au_cols = ["speaker", "frame", "timestamp", "confidence", "success", "depression",
                    "AU04_c", "AU12_c", "AU15_c", "AU23_c", "AU28_c", "AU45_c"]
     data = data.drop(columns=non_au_cols)
     data = data.set_index("person_ID")
@@ -117,10 +129,10 @@ def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
 
     return group_stats
 
-def main(base_folder, speaker="all", confidence=0.9):
+def main(base_folder, depression_file, speaker="all", depressed="all", confidence=0.9):
 
     print("Loading data...")
-    combined = load_all_data(base_folder, speaker)
+    combined = load_all_data(base_folder, depression_file, speaker, depressed)
 
     print("Cleaning data...")
     cleaned = clean_data(combined, confidence)
@@ -132,11 +144,11 @@ def main(base_folder, speaker="all", confidence=0.9):
     group_stats = compute_group_stats(wide_person_stats)
 
     # Save
-    combined_file = f"combined_AUs_labeled_{speaker}.csv"
-    cleaned_file = f"cleaned_AUs_labeled_{speaker}_{confidence}.csv"
-    wide_person_file = f"AU_stats_wide_person_level_{speaker}_{confidence}.csv"
-    long_person_file = f"AU_stats_long_person_level_{speaker}_{confidence}.csv"
-    group_file = f"AU_stats_group_level_{speaker}_{confidence}.csv"
+    combined_file = f"combined_AUs_labeled_{speaker}_{depressed}.csv"
+    cleaned_file = f"cleaned_AUs_labeled_{speaker}_{depressed}_{confidence}.csv"
+    wide_person_file = f"AU_stats_wide_person_level_{speaker}_{depressed}_{confidence}.csv"
+    long_person_file = f"AU_stats_long_person_level_{speaker}_{depressed}_{confidence}.csv"
+    group_file = f"AU_stats_group_level_{speaker}_{depressed}_{confidence}.csv"
 
     combined.to_csv(combined_file, index=False)
     cleaned.to_csv(cleaned_file)
@@ -167,6 +179,21 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--file",
+        type=str,
+        required=True,
+        help="Path to file containing depression values"
+    )
+
+    parser.add_argument(
+        "--depressed",
+        type=str,
+        default="all",
+        choices=["all", "yes", "no"],
+        help="Depression filter"
+    )
+
+    parser.add_argument(
         "--speaker",
         type=str,
         default="all",
@@ -185,6 +212,8 @@ if __name__ == "__main__":
 
     main(
         base_folder=args.folder,
+        depression_file=args.file,
+        depressed=args.depressed,
         speaker=args.speaker,
         confidence=args.confidence
     )
