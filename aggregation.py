@@ -85,7 +85,7 @@ def compute_person_stats(data: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
     )
 
-    return stats, wide, long
+    return wide, long
 
 
 def compute_group_stats(person_stats:pd.DataFrame) ->pd.DataFrame:
@@ -126,7 +126,7 @@ def main(base_folder, speaker="all", confidence=0.9):
     cleaned = clean_data(combined, confidence)
 
     print("Computing person-level statistics...")
-    person_stats, wide_person_stats, long_person_stats = compute_person_stats(cleaned)
+    wide_person_stats, long_person_stats = compute_person_stats(cleaned)
 
     print("Computing group-level statistics...")
     group_stats = compute_group_stats(wide_person_stats)
@@ -134,14 +134,12 @@ def main(base_folder, speaker="all", confidence=0.9):
     # Save
     combined_file = f"combined_AUs_labeled_{speaker}.csv"
     cleaned_file = f"cleaned_AUs_labeled_{speaker}_{confidence}.csv"
-    person_file = f"AU_stats_person_level_{speaker}_{confidence}.csv"
     wide_person_file = f"AU_stats_wide_person_level_{speaker}_{confidence}.csv"
     long_person_file = f"AU_stats_long_person_level_{speaker}_{confidence}.csv"
     group_file = f"AU_stats_group_level_{speaker}_{confidence}.csv"
 
     combined.to_csv(combined_file, index=False)
     cleaned.to_csv(cleaned_file)
-    person_stats.to_csv(person_file)
     wide_person_stats.to_csv(wide_person_file)
     long_person_stats.to_csv(long_person_file, index=False)
     group_stats.to_csv(group_file)
@@ -149,7 +147,6 @@ def main(base_folder, speaker="all", confidence=0.9):
     print(f"\nSaved:")
     print(combined_file)
     print(cleaned_file)
-    print(person_file)
     print(wide_person_file)
     print(long_person_file)
     print(group_file)
