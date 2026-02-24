@@ -5,20 +5,15 @@ import statsmodels.formula.api as smf
 
 # Path before the "all_processed_data" folder
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "base_path",
-    help="Path before 'all_processed_data'"
-)
+parser.add_argument("base_path", help="Path that contains all_processed_data")
 args = parser.parse_args()
-
-base = Path(args.base_path)
-data_root = base / "all_processed_data"
+data_root = Path(args.base_path) / "all_processed_data"
 
 # File paths
-SP_DEP = "/Users/pietrorebecchi/Desktop/all_processed_data/speaking_depressed/AU_stats_wide_person_level_speaking_yes_0.7.csv"
-SP_NON = "/Users/pietrorebecchi/Desktop/all_processed_data/speaking_non-depressed/AU_stats_wide_person_level_speaking_no_0.7.csv"
-LI_DEP = "/Users/pietrorebecchi/Desktop/all_processed_data/listening_depressed/AU_stats_wide_person_level_listening_yes_0.7.csv"
-LI_NON = "/Users/pietrorebecchi/Desktop/all_processed_data/listening_non-depressed/AU_stats_wide_person_level_listening_no_0.7.csv"
+SP_DEP = data_root / "speaking_depressed" / "AU_stats_wide_person_level_speaking_yes_0.7.csv"
+SP_NON = data_root / "speaking_non-depressed" / "AU_stats_wide_person_level_speaking_no_0.7.csv"
+LI_DEP = data_root / "listening_depressed" / "AU_stats_wide_person_level_listening_yes_0.7.csv"
+LI_NON = data_root / "listening_non-depressed" / "AU_stats_wide_person_level_listening_no_0.7.csv"
 
 # Load the files
 sp_dep = pd.read_csv(SP_DEP)
@@ -65,4 +60,4 @@ for au in au_columns:
     else:
         print("Evidence that the speaking–listening difference depends on depression status.")
 
-    print("-" * 40)
+    print("-" * 100)
