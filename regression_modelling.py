@@ -1,19 +1,26 @@
+import argparse
+from pathlib import Path
 import pandas as pd
 import statsmodels.formula.api as smf
 
-# -----------------------------
-# PATHS (adjust these)
-# -----------------------------
+# Path before the "all_processed_data" folder
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "base_path",
+    help="Path before 'all_processed_data'"
+)
+args = parser.parse_args()
 
-SP_DEP = "all_processed_data/speaking_depressed/AU_stats_wide_person_level_speaking_yes_0.7.csv"
-SP_NON = "all_processed_data/speaking_non-depressed/AU_stats_wide_person_level_speaking_no_0.7.csv"
-LI_DEP = "all_processed_data/listening_depressed/AU_stats_wide_person_level_listening_yes_0.7.csv"
-LI_NON = "all_processed_data/listening_non-depressed/AU_stats_wide_person_level_listening_no_0.7.csv"
+base = Path(args.base_path)
+data_root = base / "all_processed_data"
 
-# -----------------------------
-# LOAD
-# -----------------------------
+# File paths
+SP_DEP = "/Users/pietrorebecchi/Desktop/all_processed_data/speaking_depressed/AU_stats_wide_person_level_speaking_yes_0.7.csv"
+SP_NON = "/Users/pietrorebecchi/Desktop/all_processed_data/speaking_non-depressed/AU_stats_wide_person_level_speaking_no_0.7.csv"
+LI_DEP = "/Users/pietrorebecchi/Desktop/all_processed_data/listening_depressed/AU_stats_wide_person_level_listening_yes_0.7.csv"
+LI_NON = "/Users/pietrorebecchi/Desktop/all_processed_data/listening_non-depressed/AU_stats_wide_person_level_listening_no_0.7.csv"
 
+# Load the files
 sp_dep = pd.read_csv(SP_DEP)
 sp_non = pd.read_csv(SP_NON)
 li_dep = pd.read_csv(LI_DEP)
@@ -23,25 +30,22 @@ li_non = pd.read_csv(LI_NON)
 for df in [sp_dep, sp_non, li_dep, li_non]:
     df.drop(columns=df.columns[df.columns.str.contains("Unnamed")], inplace=True)
 
-# Add labels
-sp_dep["Depression"] = 1
-sp_non["Depression"] = 0
+# Add labels for depressed/non-depressed and speaking/listening
+sp_dep["Depression"] = 1 # depressed
+sp_non["Depression"] = 0 # non-depressed
 li_dep["Depression"] = 1
 li_non["Depression"] = 0
 
-sp_dep["Role"] = 1   # speaking
+sp_dep["Role"] = 1 # speaking
 sp_non["Role"] = 1
-li_dep["Role"] = 0   # listening
+li_dep["Role"] = 0 # listening
 li_non["Role"] = 0
 
 # Combine everything
 df = pd.concat([sp_dep, sp_non, li_dep, li_non], ignore_index=True)
 
-# -----------------------------
-# SELECT AUs
-# -----------------------------
-
-au_columns = [col for col in df.columns if "_mean" in col]
+# Select AUs
+au_columns = [c for c in df.columns if c.startswith("AU") and c.endswith("_mean")]
 
 print("\nInteraction regression results:\n")
 
@@ -53,6 +57,12 @@ for au in au_columns:
     interaction_p = model.pvalues.get("Depression:Role", None)
 
     print(f"{au}")
-    print(f"  Interaction p-value: {interaction_p:.4f}")
-    print(f"  R^2: {model.rsquared:.4f}")
+    print(f"Interaction p-value: {interaction_p:.4f}")
+    print(f"R^2: {model.rsquared:.4f}")
+
+    if interaction_p > 0.05:
+        print("No evidence that the speaking–listening difference depends on depression status.")
+    else:
+        print("Evidence that the speaking–listening difference depends on depression status.")
+
     print("-" * 40)
