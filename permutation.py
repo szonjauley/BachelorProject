@@ -79,10 +79,10 @@ def permutation_test_interaction(df, n_perm=5000):
 
     return results_df
 
-def main(input_file, metric, n_perm, output_file):
+def main(input_file, metric, n_perm, output_folder):
     data = prepare_data(input_file, metric)
     results_df = permutation_test_interaction(data, n_perm)
-    results_df.to_csv(output_file, index=False)
+    results_df.to_csv(f"{output_folder}/permutation_results_{metric}.csv", index=False)
 
 if __name__ == "__main__":
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output",
         type=str,
-        default=str(Path.cwd() / "permutation_results.csv"),
-        help="Path to output file with test results"
+        default=str(Path.cwd()),
+        help="Path to folder for output file with test results"
     )
 
     parser.add_argument(
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     main(
         input_file=args.input,
-        output_file=args.output,
+        output_folder=args.output,
         n_perm=args.n_perm,
         metric=args.metric
     )
