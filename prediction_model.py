@@ -133,8 +133,8 @@ def run_experiment(feature_path, group_name):
     rf_param_grid = {
         "n_estimators": [100, 500, 1000],
         "max_depth": [None, 2, 4, 6, 8, 10],
-        "min_samples_split": [None, 2, 4, 6, 8, 10],
-        "min_samples_leaf": [None, 2, 4, 6, 8, 10]
+        "min_samples_split": [2, 4, 6, 8, 10],
+        "min_samples_leaf": [1, 3, 5, 7, 9]
     }
 
     rf_grid = GridSearchCV(
