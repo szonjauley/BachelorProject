@@ -6,6 +6,12 @@ import statsmodels.formula.api as smf
 # Path before the "all_processed_data" folder
 parser = argparse.ArgumentParser()
 parser.add_argument("base_path", help="Path that contains all_processed_data")
+parser.add_argument(
+    "--stat",
+    choices=["mean", "std"],
+    default="mean",
+    help="Which AU statistic to use: mean or std (default: mean)"
+)
 args = parser.parse_args()
 data_root = Path(args.base_path) / "all_processed_data"
 
@@ -39,10 +45,11 @@ li_non["Role"] = 0
 # Combine everything
 df = pd.concat([sp_dep, sp_non, li_dep, li_non], ignore_index=True)
 
-# Select AUs
-au_columns = [c for c in df.columns if c.startswith("AU") and c.endswith("_mean")]
+# Select AUs based on --stat (mean or std)
+suffix = f"_{args.stat}"
+au_columns = [c for c in df.columns if c.startswith("AU") and c.endswith(suffix)]
 
-print("\nInteraction regression results:\n")
+print(f"\nInteraction regression results ({args.stat}):\n")
 
 for au in au_columns:
 
