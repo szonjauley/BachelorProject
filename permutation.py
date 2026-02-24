@@ -76,3 +76,8 @@ def permutation_test_interaction(df, n_perm=5000):
     results_df["significant"] = reject
 
     return results_df
+
+def main(input_file, metric, n_perm, output_file):
+    data = prepare_data(input_file, metric)
+    results_df = permutation_test_interaction(data, n_perm)
+    results_df.to_csv(output_file, index=False)
