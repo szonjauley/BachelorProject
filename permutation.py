@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
+from statsmodels.stats.multitest import multipletests
 
 def prepare_data(file, metric):
     """
@@ -67,4 +68,11 @@ def permutation_test_interaction(df, n_perm=5000):
             "p_value": p_value
         })
 
-    return results
+    results_df = pd.DataFrame(results)
+
+    reject, p_fdr, _, _ = multipletests(results_df["p_value"], method="fdr_bh")
+
+    results_df["p_fdr"] = p_fdr
+    results_df["significant"] = reject
+
+    return results_df
