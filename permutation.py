@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.stats.multitest import multipletests
+from pathlib import Path
+import argparse
 
 def prepare_data(file, metric):
     """
@@ -81,3 +83,47 @@ def main(input_file, metric, n_perm, output_file):
     data = prepare_data(input_file, metric)
     results_df = permutation_test_interaction(data, n_perm)
     results_df.to_csv(output_file, index=False)
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Run permutation test on person level aggregated mean AU scores"
+    )
+
+    parser.add_argument(
+        "--input",
+        type=str,
+        required=True,
+        help="Path to au_long.csv"
+    )
+
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=str(Path.cwd() / "permutation_results.csv"),
+        help="Path to output file with test results"
+    )
+
+    parser.add_argument(
+        "--n_perm",
+        type=int,
+        default=5000,
+        help="Number of permutations"
+    )
+
+    parser.add_argument(
+    "--metric",
+    type=str,
+    default="mean",
+    choices=["mean", "std"],
+    help="Metric the permutation test should be run on"
+    )
+
+    args = parser.parse_args()
+
+    main(
+        input_file=args.input,
+        output_file=args.output,
+        n_perm=args.n_perm,
+        metric=args.metric
+    )
