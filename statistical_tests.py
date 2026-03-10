@@ -66,7 +66,7 @@ def run_statistical_test(path_1, label_1, path_2, label_2, statistic, filename):
             "test": test_name,
             "statistic": stat,
             "p_value": p,
-            "accept_h_0": p >= (0.05/14)
+            f"Significant (p < {0.05/14})": p >= (0.05/14)
         })
 
     results_df = pd.DataFrame(results)
