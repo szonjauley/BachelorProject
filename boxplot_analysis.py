@@ -71,27 +71,27 @@ comparisons = [
     # 1. All speaking vs all listening
     (SPEAKING_ALL_PATH, "Speaking (All)",
      LISTENING_ALL_PATH, "Listening (All)",
-     "speaking_all_vs_listening_all.png"),
+     f"{STATISTIC}_speaking_all_vs_listening_all.png"),
 
     # 2. Speaking non-depressed vs listening non-depressed
     (SPEAKING_NON_DEPRESSED_PATH, "Speaking Non-Depressed",
      LISTENING_NON_DEPRESSED_PATH, "Listening Non-Depressed",
-     "speaking_non_dep_vs_listening_non_dep.png"),
+     f"{STATISTIC}_speaking_non_dep_vs_listening_non_dep.png"),
 
     # 3. Speaking depressed vs listening depressed
     (SPEAKING_DEPRESSED_PATH, "Speaking Depressed",
      LISTENING_DEPRESSED_PATH, "Listening Depressed",
-     "speaking_dep_vs_listening_dep_duplicate.png"),
+     f"{STATISTIC}_speaking_dep_vs_listening_dep_duplicate.png"),
 
     # 4. Listening non-depressed vs listening depressed
     (LISTENING_NON_DEPRESSED_PATH, "Listening Non-Depressed",
      LISTENING_DEPRESSED_PATH, "Listening Depressed",
-     "listening_non_dep_vs_dep.png"),
+     f"{STATISTIC}_listening_non_dep_vs_dep.png"),
 
     # 5. Speaking non-depressed vs speaking depressed
     (SPEAKING_NON_DEPRESSED_PATH, "Speaking Non-Depressed",
      SPEAKING_DEPRESSED_PATH, "Speaking Depressed",
-     "speaking_non_dep_vs_dep.png"),
+     f"{STATISTIC}_speaking_non_dep_vs_dep.png"),
 ]
 
 for path1, label1, path2, label2, filename in comparisons:
