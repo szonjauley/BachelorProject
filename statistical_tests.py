@@ -18,7 +18,7 @@ SPEAKING_ALL_PATH = "all_processed_data/speaking_all/AU_stats_wide_person_level_
 LISTENING_ALL_PATH = "all_processed_data/listening_all/AU_stats_wide_person_level_listening_all_0.7.csv"
 
 # Statistic to analyze: "mean", "std", or "median"
-STATISTIC = "mean"
+STATISTIC = "std"
 
 OUTPUT_DIR = "statistical_tests"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -86,27 +86,27 @@ comparisons = [
     # 1. All speaking vs all listening (paired)
     (SPEAKING_ALL_PATH, "Speaking (All)",
      LISTENING_ALL_PATH, "Listening (All)",
-     "speaking_all_vs_listening_all_stats_{STATISTIC}.csv"),
+     f"speaking_all_vs_listening_all_stats_{STATISTIC}.csv"),
 
     # 2. Speaking non-depressed vs listening non-depressed (paired)
     (SPEAKING_NON_DEPRESSED_PATH, "Speaking Non-Depressed",
      LISTENING_NON_DEPRESSED_PATH, "Listening Non-Depressed",
-     "speaking_non_dep_vs_listening_non_dep_stats_{STATISTIC}.csv"),
+     f"speaking_non_dep_vs_listening_non_dep_stats_{STATISTIC}.csv"),
 
     # 3. Speaking depressed vs listening depressed (paired)
     (SPEAKING_DEPRESSED_PATH, "Speaking Depressed",
      LISTENING_DEPRESSED_PATH, "Listening Depressed",
-     "speaking_dep_vs_listening_dep_stats_{STATISTIC}.csv"),
+     f"speaking_dep_vs_listening_dep_stats_{STATISTIC}.csv"),
 
     # 4. Listening non-depressed vs listening depressed (independent)
     (LISTENING_NON_DEPRESSED_PATH, "Listening Non-Depressed",
      LISTENING_DEPRESSED_PATH, "Listening Depressed",
-     "listening_non_dep_vs_dep_stats_{STATISTIC}.csv"),
+     f"listening_non_dep_vs_dep_stats_{STATISTIC}.csv"),
 
     # 5. Speaking non-depressed vs speaking depressed (independent)
     (SPEAKING_NON_DEPRESSED_PATH, "Speaking Non-Depressed",
      SPEAKING_DEPRESSED_PATH, "Speaking Depressed",
-     "speaking_non_dep_vs_dep_stats_{STATISTIC}.csv"),
+     f"speaking_non_dep_vs_dep_stats_{STATISTIC}.csv"),
 ]
 
 for path1, label1, path2, label2, filename in comparisons:
