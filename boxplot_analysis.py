@@ -81,7 +81,7 @@ comparisons = [
     # 3. Speaking depressed vs listening depressed
     (SPEAKING_DEPRESSED_PATH, "Speaking Depressed",
      LISTENING_DEPRESSED_PATH, "Listening Depressed",
-     f"{STATISTIC}_speaking_dep_vs_listening_dep_duplicate.png"),
+     f"{STATISTIC}_speaking_dep_vs_listening_dep.png"),
 
     # 4. Listening non-depressed vs listening depressed
     (LISTENING_NON_DEPRESSED_PATH, "Listening Non-Depressed",
