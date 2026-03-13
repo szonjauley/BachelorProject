@@ -35,3 +35,19 @@ def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
     data["depression"] = data["person_ID"].map(labelmap)
 
     return data
+
+def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
+    """
+    Takes the combined data, filters it for the specified confidence and successful frames and removes all non-gaze columns
+    Returns clean data indexed by person_ID including depression labels and segment type
+    """
+    data = data[
+        (data["confidence"] > confidence) &
+        (data["success"] == 1)
+    ]
+
+    non_gaze_cols = ["frame", "timestamp", "confidence", "success"]
+    data = data.drop(columns=non_gaze_cols)
+    data = data.set_index("person_ID")
+
+    return data
