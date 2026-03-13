@@ -47,3 +47,51 @@ def get_delta(df:pd.DataFrame, group_cols:list) -> pd.DataFrame:
     df["delta_deg"] = np.rad2deg(df["delta_rad"])
 
     return df
+
+def main(file:Path, depression:str):
+
+    print("Loading data...")
+    df = load_data(file, depression)
+
+    print("Averaging eyes...")
+    df = average_eyes(df)
+
+    
+    # --- ALL ---
+    print("Creating file for all...")
+    df_all = df.copy()
+    df_all["segment"] = (df_all["person_ID"] != df_all["person_ID"].shift()).cumsum()
+    df_all = get_delta(df_all, ["segment"])
+
+    # --- LISTENING ---
+    print("Creating file for listening...")
+    df_listening = df.copy()
+    boundary = (
+        (df_listening["person_ID"] != df_listening["person_ID"].shift()) |
+        (df_listening["speaker"] != df_listening["speaker"].shift())
+    )
+    df_listening["segment"] = boundary.cumsum()
+    df_listening = df_listening[df_listening["speaker"] == "Listening"]
+    df_listening = get_delta(df_listening, ["segment"])
+
+    # --- SPEAKING ---
+    print("Creating file for sepaking...")
+    df_speaking = df.copy()
+    boundary = (
+        (df_speaking["person_ID"] != df_speaking["person_ID"].shift()) |
+        (df_speaking["speaker"] != df_speaking["speaker"].shift())
+    )
+    df_speaking["segment"] = boundary.cumsum()
+    df_speaking = df_speaking[df_speaking["speaker"] == "Speaking"]
+    df_speaking = get_delta(df_speaking, ["segment"])
+
+    print("Saving files...")
+    combined_file = f"combined_gaze_deltas_{depression}.csv"
+    listening_file = f"listening_gaze_deltas_{depression}.csv"
+    speaking_file = f"speaking_gaze_deltas_{depression}.csv"
+
+    df_all.to_csv(combined_file, index=False)
+    df_listening.to_csv(listening_file, index=False)
+    df_speaking.to_csv(speaking_file, index=False)
+
+    return
