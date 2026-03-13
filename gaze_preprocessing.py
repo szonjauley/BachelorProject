@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import argparse
 
 def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
     """
@@ -71,3 +72,38 @@ def main(base_folder, depression_file, confidence=0.7):
     print(cleaned_file)
 
     return
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Combine and clean gaze values"
+    )
+
+    parser.add_argument(
+        "--folder",
+        type=str,
+        required=True,
+        help="Path to base folder containing person directories"
+    )
+
+    parser.add_argument(
+        "--file",
+        type=str,
+        required=True,
+        help="Path to file containing depression values"
+    )
+
+    parser.add_argument(
+        "--confidence",
+        type=float,
+        default=0.7,
+        help="Minimum confidence threshold"
+    )
+
+    args = parser.parse_args()
+
+    main(
+        base_folder=args.folder,
+        depression_file=args.file,
+        confidence=args.confidence
+    )
