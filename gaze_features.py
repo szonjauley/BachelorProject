@@ -28,3 +28,22 @@ def average_eyes(df:pd.DataFrame) -> pd.DataFrame:
     df[["x_avg","y_avg","z_avg"]] = df[["x_avg","y_avg","z_avg"]].div(norm, axis=0)
 
     return df
+
+def get_delta(df:pd.DataFrame, group_cols:list) -> pd.DataFrame:
+    """
+    Computes delta angle between frames and returns it in radians and degrees
+    """
+    V = df[["x_avg","y_avg","z_avg"]].to_numpy()
+
+    V_prev = (
+        df.groupby(group_cols)[["x_avg","y_avg","z_avg"]]
+        .shift()
+        .to_numpy()
+    )
+
+    dot = np.einsum("ij,ij->i", V, V_prev)
+
+    df["delta_rad"] = np.arccos(np.clip(dot, -1, 1))
+    df["delta_deg"] = np.rad2deg(df["delta_rad"])
+
+    return df
