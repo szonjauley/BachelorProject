@@ -36,7 +36,7 @@ def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
 
     return data
 
-def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
+def clean_data(data:pd.DataFrame, confidence:float=0.7) ->pd.DataFrame:
     """
     Takes the combined data, filters it for the specified confidence and successful frames and removes all non-gaze columns
     Returns clean data indexed by person_ID including depression labels and segment type
@@ -51,3 +51,23 @@ def clean_data(data:pd.DataFrame, confidence:float=0.9) ->pd.DataFrame:
     data = data.set_index("person_ID")
 
     return data
+
+def main(base_folder, depression_file, confidence=0.7):
+
+    print("Loading data...")
+    combined = load_all_data(base_folder, depression_file)
+
+    print("Cleaning data...")
+    cleaned = clean_data(combined, confidence)
+
+    # Save
+    combined_file = f"combined_gaze_labeled.csv"
+    cleaned_file = f"cleaned_gaze_labeled_{confidence}.csv"
+
+    print(f"\nSaved:")
+    combined.to_csv(combined_file, index=False)
+    print(combined_file)
+    cleaned.to_csv(cleaned_file)
+    print(cleaned_file)
+
+    return
