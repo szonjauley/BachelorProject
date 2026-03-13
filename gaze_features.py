@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import argparse
 
 def load_data(file:Path, depression:str="all") -> pd.DataFrame:
     """
@@ -95,3 +96,31 @@ def main(file:Path, depression:str):
     df_speaking.to_csv(speaking_file, index=False)
 
     return
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Create gaze features"
+    )
+
+    parser.add_argument(
+        "--file",
+        type=str,
+        required=True,
+        help="Path to output file from gaze_preprocessing.py containing gaze values"
+    )
+
+    parser.add_argument(
+        "--depression",
+        type=str,
+        default="all",
+        choices=["all", "yes", "no"],
+        help="Depression status"
+    )
+
+    args = parser.parse_args()
+
+    main(
+        file=args.file,
+        depression=args.depression
+    )
