@@ -21,3 +21,37 @@ def shapiro_test(x) -> pd.Series:
         "p_value": p,
         "normal": p > 0.05
     })
+
+def check_gaze_normality(df:pd.DataFrame):
+    """
+    Run Shapiro normality test on all data and format output
+    """
+
+    # normal groups
+    res = (
+        df.groupby(["stat", "segment", "depression"])["delta_deg"]
+        .apply(shapiro_test)
+        .unstack()
+        .reset_index()
+    )
+
+    # add "all depression" rows
+    res_all = (
+        df.groupby(["stat", "segment"])["delta_deg"]
+        .apply(shapiro_test)
+        .unstack()
+        .reset_index()
+    )
+    res_all["depression"] = "all"
+
+    # combine
+    summary = pd.concat([res, res_all], ignore_index=True)
+
+    summary = summary.rename(columns={
+        "segment": "segment_type",
+        "depression": "depressed"
+    })
+
+    summary = summary.sort_values(["stat", "segment_type", "depressed"])
+
+    return summary
