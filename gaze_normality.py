@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from scipy.stats import shapiro
+import argparse
 
 def load_data(file:Path) -> pd.DataFrame:
     """
@@ -60,3 +61,22 @@ def main(file:Path):
     df = load_data(file)
     gaze_summary = check_gaze_normality(df)
     gaze_summary.to_csv("gaze_normality.csv", index=False)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Normality check for aggregated gaze values"
+    )
+
+    parser.add_argument(
+        "--file",
+        type=str,
+        required=True,
+        help="Path to gaze aggregation file"
+    )
+
+    args = parser.parse_args()
+    main(
+        file=args.file
+    )
+
+###example run: python normality_test.py --file gaze_aggregation.csv
