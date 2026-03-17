@@ -40,3 +40,19 @@ def aggregate_file(df: pd.DataFrame, segment: str) -> pd.DataFrame:
     stats = stats[["person_ID", "stat", "depression", "segment", "delta_deg"]]
 
     return stats
+
+def combine_files(files, segments):
+    """
+    Combine aggregated files into a single output
+    """
+    dfs = [
+        aggregate_file(load_data(file), segment)
+        for file, segment in zip(files, segments)
+    ]
+
+    combined = pd.concat(dfs, ignore_index=True)
+
+    # order by person_ID
+    combined = combined.sort_values(["person_ID", "segment", "stat"])
+
+    return combined
