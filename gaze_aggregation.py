@@ -41,7 +41,7 @@ def aggregate_file(df: pd.DataFrame, segment: str) -> pd.DataFrame:
 
     return stats
 
-def combine_files(files, segments):
+def combine_files(files:list, segments:list) -> pd.DataFrame:
     """
     Combine aggregated files into a single output
     """
@@ -56,3 +56,21 @@ def combine_files(files, segments):
     combined = combined.sort_values(["person_ID", "segment", "stat"])
 
     return combined
+
+def main(base_folder: Path):
+
+    base_path = Path(base_folder)
+    files = [
+        base_path / "combined_gaze_deltas_all.csv",
+        base_path / "listening_gaze_deltas_all.csv",
+        base_path / "speaking_gaze_deltas_all.csv"
+    ]
+
+    segments = ["all", "listening", "speaking"]
+
+    combined = combine_files(files, segments)
+
+    combined.to_csv("gaze_aggregation.csv", index=False)
+
+    return
+
