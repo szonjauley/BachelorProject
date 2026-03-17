@@ -55,3 +55,8 @@ def check_gaze_normality(df:pd.DataFrame):
     summary = summary.sort_values(["stat", "segment_type", "depressed"])
 
     return summary
+
+def main(file:Path):
+    df = load_data(file)
+    gaze_summary = check_gaze_normality(df)
+    gaze_summary.to_csv("gaze_normality.csv", index=False)
