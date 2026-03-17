@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import argparse
 
 
 def load_data(file: Path) -> pd.DataFrame:
@@ -74,3 +75,21 @@ def main(base_folder: Path):
 
     return
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Combine and aggregate gaze values"
+    )
+
+    parser.add_argument(
+        "--folder",
+        type=str,
+        required=True,
+        help="Path to base folder containing delta files"
+    )
+
+    args = parser.parse_args()
+    main(
+        base_folder=args.folder
+    )
+
+### example run: python gaze_aggregation.py --folder /Users/szonja/Documents/ITU/Thesis
