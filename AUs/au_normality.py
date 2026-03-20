@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from scipy.stats import shapiro
+import argparse
 
 
 def load_data(file: Path) -> pd.DataFrame:
@@ -80,3 +81,23 @@ def main(file: Path):
     normality_df.to_csv("au_normality.csv", index=False)
 
     return
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Normality check for AU values"
+    )
+
+    parser.add_argument(
+        "--file", 
+        type=str, 
+        required=True,
+        help="Path to au aggregation file"
+    )
+
+    args = parser.parse_args()
+
+    main(
+        file=Path(args.file)
+    )
+
+### example run: python au_normality.py --file au_long.csv
