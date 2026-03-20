@@ -72,3 +72,11 @@ def compute_normality(df: pd.DataFrame) -> pd.DataFrame:
                 })
 
     return pd.DataFrame(results)
+
+def main(file: Path):
+    df = load_data(file)
+
+    normality_df = compute_normality(df)
+    normality_df.to_csv("au_normality.csv", index=False)
+
+    return
