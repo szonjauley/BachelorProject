@@ -19,9 +19,7 @@ USE_REDUCED_FEATURES = True   # True = only mean + std
 # ======================================================
 # PATHS
 # ======================================================
-ALL_ALL_PATH = "all_processed_data/all_all/AU_stats_wide_person_level_all_all_0.7.csv"
-LISTENING_ALL_PATH = "all_processed_data/listening_all/AU_stats_wide_person_level_listening_all_0.7.csv"
-SPEAKING_ALL_PATH = "all_processed_data/speaking_all/AU_stats_wide_person_level_speaking_all_0.7.csv"
+GAZE_PATH = "au_long.csv"   # change to your file name
 
 TRAIN_SPLIT = "all_processed_data/train_split_Depression_AVEC2017.csv"
 DEV_SPLIT   = "all_processed_data/dev_split_Depression_AVEC2017.csv"
@@ -48,27 +46,61 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 
 # ======================================================
+# FEATURE LOADING
+# ======================================================
+def load_and_pivot_features(feature_path, segment_filter):
+    """
+    Expected long-format input columns:
+        person_id, AU, depressed, segment_type, stat, value
+
+    Returns wide person-level data:
+        person_id, AU1_mean, AU1_std, AU2_mean, AU2_std, ...
+    """
+    df = pd.read_csv(feature_path)
+
+    df = df[df["segment_type"] == segment_filter].copy()
+
+    df_wide = df.pivot_table(
+        index="person_id",
+        columns=["AU", "stat"],
+        values="value",
+        aggfunc="first"
+    )
+
+    df_wide.columns = [f"{au}_{stat}" for au, stat in df_wide.columns]
+    df_wide = df_wide.reset_index()
+
+    return df_wide
+
+
+# ======================================================
 # EXPERIMENT FUNCTION
 # ======================================================
 def run_experiment(feature_path, group_name):
-
     print(f"\n================ {group_name} ================")
 
-    df_features = pd.read_csv(feature_path)
+    if group_name == "COMBINED":
+        df_features = load_and_pivot_features(feature_path, "all")
+    elif group_name == "LISTENING":
+        df_features = load_and_pivot_features(feature_path, "listening")
+    elif group_name == "SPEAKING":
+        df_features = load_and_pivot_features(feature_path, "speaking")
+    else:
+        raise ValueError(f"Unknown group_name: {group_name}")
 
     # FILTER DATA
-    train_features = df_features[df_features["person_ID"].isin(train_ids)]
-    test_features  = df_features[df_features["person_ID"].isin(test_ids)]
+    train_features = df_features[df_features["person_id"].isin(train_ids)]
+    test_features  = df_features[df_features["person_id"].isin(test_ids)]
 
     train_merged = train_features.merge(
         train_dev_df[["Participant_ID", "PHQ8_Binary"]],
-        left_on="person_ID",
+        left_on="person_id",
         right_on="Participant_ID"
     )
 
     test_merged = test_features.merge(
         test_df[["Participant_ID", "PHQ8_Binary"]],
-        left_on="person_ID",
+        left_on="person_id",
         right_on="Participant_ID"
     )
 
@@ -84,7 +116,7 @@ def run_experiment(feature_path, group_name):
     else:
         print("Using FULL feature set")
         feature_cols = train_merged.drop(
-            columns=["person_ID", "Participant_ID", "PHQ8_Binary"]
+            columns=["person_id", "Participant_ID", "PHQ8_Binary"]
         ).columns
 
     X_train = train_merged[feature_cols].values
@@ -156,7 +188,7 @@ def run_experiment(feature_path, group_name):
     # OPTIONAL TEST EVALUATION
     # ======================================================
     if RUN_TEST:
-        print("\n🔎 Running FINAL TEST evaluation...")
+        print("\nRunning FINAL TEST evaluation...")
 
         best_log = log_grid.best_estimator_
         best_rf = rf_grid.best_estimator_
@@ -175,13 +207,12 @@ def run_experiment(feature_path, group_name):
         print("Accuracy:", accuracy_score(y_test, rf_preds))
         print("F1:", f1_score(y_test, rf_preds))
 
-
     return log_grid, rf_grid
 
 
 # ======================================================
 # RUN ALL GROUPS
 # ======================================================
-log_combined, rf_combined = run_experiment(ALL_ALL_PATH, "COMBINED")
-log_listening, rf_listening = run_experiment(LISTENING_ALL_PATH, "LISTENING")
-log_speaking, rf_speaking = run_experiment(SPEAKING_ALL_PATH, "SPEAKING")
+log_combined, rf_combined = run_experiment(GAZE_PATH, "COMBINED")
+log_listening, rf_listening = run_experiment(GAZE_PATH, "LISTENING")
+log_speaking, rf_speaking = run_experiment(GAZE_PATH, "SPEAKING")
