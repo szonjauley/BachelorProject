@@ -1,9 +1,7 @@
 import argparse
 import os
-import pandas as pd
 import csv
-
-
+import pandas as pd
 
 
 def main():
@@ -22,20 +20,22 @@ def main():
     else:
         out_path = args.output
 
+    # Open the input file to inspect a small sample and detect the delimiter
     with open(input_path, "r", encoding="utf-8", newline="") as f:
-        sample = f.read(4096)
+        sample = f.read(4000) # Read the first 4000 characters as a sample
         f.seek(0)
         try:
+            # Try to automatically detect whether the separator is a tab, semicolon, or a comma
             dialect = csv.Sniffer().sniff(sample, delimiters=["\t", ";", ","])
             detected_sep = dialect.delimiter
         except Exception:
             detected_sep = "\t" if "\t" in sample else (";" if ";" in sample else ",")
 
+    # Read the CSV file with the detected separator
     input = pd.read_csv(input_path, sep=detected_sep)
 
-    # input = pd.read_csv(input_path, sep=";")
-
-    input.columns = input.columns.str.strip() # Remove spaces in columns names
+    # Remove spaces in columns names
+    input.columns = input.columns.str.strip()
 
     # Check if all required columns are present; otherwise, give an error
     required_columns_input = {"speaker", "start_time", "stop_time", "value"}
@@ -69,8 +69,7 @@ def main():
 
     segments.to_csv(out_path, index=False, sep=";")
 
-    print(f"Done! Output file name is {out_path}")
-    print(f"It contains a total number of segments of {len(segments)}")
+    print(f"Done! Output file name is {out_path}. It contains a total number of segments of {len(segments)}")
 
 if __name__ == "__main__":
     main()
