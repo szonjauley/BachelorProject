@@ -5,13 +5,19 @@ import sys
 import zipfile
 import shutil
 
-DESKTOP = os.path.expanduser("~/Desktop")
 
-SPEAKER_SCRIPT = os.path.join(DESKTOP, "ellie_participant_split.py")
-AUS_SCRIPT = os.path.join(DESKTOP, "aus_split.py")
+# Absolute path of the folder where this script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Remove the zipped folders after successful extraction
+# Absolute paths to the two helper scripts
+SPEAKER_SCRIPT = os.path.join(SCRIPT_DIR, "ellie_participant_split.py")
+AUS_SCRIPT = os.path.join(SCRIPT_DIR, "aus_split.py")
+
+BASE_DIR = SCRIPT_DIR
+
+# Delete the zip files after successful extraction
 DELETE_ZIPS_AFTER_EXTRACT = True
+
 
 def run(cmd, cwd):
     print("\n>>>", " ".join(cmd))
@@ -20,12 +26,11 @@ def run(cmd, cwd):
         print("!! Failed in:", cwd)
         sys.exit(r.returncode)
 
+
 def _flatten_single_nested_dir(target_dir: str):
-    """
-    Some zips extract into a single nested folder (e.g., target_dir/300_P/...).
-    If target_dir contains exactly one directory and no files, move its contents up.
-    """
+    # List all entries in the target folder, excluding macOS metadata files
     entries = [e for e in os.listdir(target_dir) if e not in (".DS_Store",)]
+    # Build full paths for all entries
     paths = [os.path.join(target_dir, e) for e in entries]
     dirs = [p for p in paths if os.path.isdir(p)]
     files = [p for p in paths if os.path.isfile(p)]
@@ -43,24 +48,23 @@ def _flatten_single_nested_dir(target_dir: str):
             shutil.move(src, dst)
         shutil.rmtree(nested)
 
+
 def unzip_archives_on_desktop():
-    zips = sorted(glob.glob(os.path.join(DESKTOP, "*_P.zip")))
+    # Find all zip files in BASE_DIR whose names end with "_P.zip"
+    zips = sorted(glob.glob(os.path.join(BASE_DIR, "*_P.zip")))
     if not zips:
         return
 
-    print("Found zip archives:", len(zips))
     for zip_path in zips:
-        base = os.path.splitext(os.path.basename(zip_path))[0]  # e.g., "300_P"
-        out_dir = os.path.join(DESKTOP, base)
+        base = os.path.splitext(os.path.basename(zip_path))[0]
+        out_dir = os.path.join(BASE_DIR, base)
 
-        # If folder exists and seems non-empty, skip extraction but still delete zip (optional).
-        # Here: only delete zip if we actually extract it successfully.
         if os.path.isdir(out_dir) and os.listdir(out_dir):
-            print(f" - {base} already extracted, skipping unzip (keeping zip).")
             continue
 
         os.makedirs(out_dir, exist_ok=True)
-        print(f" - Unzipping {os.path.basename(zip_path)} -> {out_dir}")
+        # Create the output directory if it does not exist
+        print(f"Unzipping {os.path.basename(zip_path)} -> {out_dir}")
 
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(out_dir)
@@ -69,14 +73,9 @@ def unzip_archives_on_desktop():
 
         if DELETE_ZIPS_AFTER_EXTRACT:
             os.remove(zip_path)
-            print(f" Deleted zip: {zip_path}")
 
 
 def cleanup_folder_keep_only(folder: str, keep_paths):
-    """
-    Delete EVERYTHING inside folder except the files listed in keep_paths.
-    Also removes empty directories afterward.
-    """
     keep_abs = set(os.path.abspath(p) for p in keep_paths if p)
 
     deleted = 0
@@ -88,7 +87,7 @@ def cleanup_folder_keep_only(folder: str, keep_paths):
                     os.remove(p)
                     deleted += 1
                 except Exception as e:
-                    print(" !! Could not delete file:", p, "->", e)
+                    print("Could not delete file:", p, "->", e)
 
         for d in dirs:
             dp = os.path.join(root, d)
@@ -98,24 +97,22 @@ def cleanup_folder_keep_only(folder: str, keep_paths):
             except Exception:
                 pass
 
-    print(f"Cleanup done in {os.path.basename(folder)}. Deleted {deleted} file(s).")
+    print(f"Cleanup done in {os.path.basename(folder)}. Deleted {deleted} file(s)")
 
 
 def main():
-    # 1) unzip first (and delete zips after extracting)
     unzip_archives_on_desktop()
 
-    # 2) Process extracted folders like 300_P, 301_P, ...
     folders = sorted(
         [
-            os.path.join(DESKTOP, d)
-            for d in os.listdir(DESKTOP)
-            if os.path.isdir(os.path.join(DESKTOP, d)) and d.endswith("_P")
+            os.path.join(BASE_DIR, d)
+            for d in os.listdir(BASE_DIR)
+            if os.path.isdir(os.path.join(BASE_DIR, d)) and d.endswith("_P")
         ]
     )
 
     if not folders:
-        print("No *_P folders found on Desktop.")
+        print("No *_P folders found in:", BASE_DIR)
         return
 
     for folder in folders:
@@ -124,19 +121,17 @@ def main():
         print("Processing:", folder_name)
         print("==============================")
 
-        prefix = folder_name.split("_", 1)[0]  # "300_P" -> "300"
+        prefix = folder_name.split("_", 1)[0]
 
         transcripts = glob.glob(os.path.join(folder, "**", "*_TRANSCRIPT.csv"), recursive=True)
         aus_files = glob.glob(os.path.join(folder, "**", "*_CLNF_AUs.txt"), recursive=True)
-
-        # NEW: keep gaze file like 301_CLNF_gaze.txt (number varies)
         gaze_files = glob.glob(os.path.join(folder, "**", "*_CLNF_gaze.txt"), recursive=True)
 
         if not transcripts:
-            print(" - No *_TRANSCRIPT.csv found, skipping.")
+            print("No *_TRANSCRIPT.csv found, skipping")
             continue
         if not aus_files:
-            print(" - No *_CLNF_AUs.txt found, skipping.")
+            print("No *_CLNF_AUs.txt found, skipping")
             continue
 
         transcript = transcripts[0]
@@ -156,10 +151,7 @@ def main():
         if gaze_file:
             keep_list.append(gaze_file)
 
-        cleanup_folder_keep_only(
-            folder,
-            keep_paths=keep_list,
-        )
+        cleanup_folder_keep_only(folder, keep_paths=keep_list)
 
         print("Final kept files:")
         print(" -", transcript)
@@ -168,7 +160,6 @@ def main():
             print(" -", gaze_file)
         print(" -", segments_out)
         print(" -", labeled_out)
-
 
 if __name__ == "__main__":
     main()

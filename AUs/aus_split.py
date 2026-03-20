@@ -1,13 +1,11 @@
 import argparse
 import os
-import numpy as np
 import pandas as pd
-
-
+import numpy as np
 
 
 def label_timestamps_with_segments(au_df: pd.DataFrame, segments_df: pd.DataFrame) -> pd.DataFrame:
-    # Using copies to not modify the orginal data
+    # Using copies to not modify the original data
     au_df = au_df.copy()
     segments_df = segments_df.copy()
     # Remove spaces in columns names
@@ -67,8 +65,8 @@ def label_timestamps_with_segments(au_df: pd.DataFrame, segments_df: pd.DataFram
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("segments_csv")
-    parser.add_argument("aus_txt")
+    parser.add_argument("segments_csv") # the segmented transcript file (e.g., XXX_speaker_segments.csv)
+    parser.add_argument("aus_txt") # the AUs .txt file (e.g., XXX_CLNF_AUs.txt)
     parser.add_argument("-o", "--output", default=None)
     args = parser.parse_args()
 
@@ -88,8 +86,7 @@ def main():
 
     labeled.to_csv(out_path, index=False)
 
-    print(f"Done! Output file name is {out_path}")
-    print("Kept rows:", len(labeled), "of", len(au_df))
+    print(f"Done! Output file name is {out_path}. Kept rows: {len(labeled)} of {len(au_df)}")
 
 if __name__ == "__main__":
     main()
