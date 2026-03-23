@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -19,11 +20,13 @@ USE_REDUCED_FEATURES = True   # True = only mean + std
 # ======================================================
 # PATHS
 # ======================================================
-GAZE_PATH = "au_long.csv"   # change to your file name
+SCRIPT_DIR = Path(__file__).parent.resolve()
 
-TRAIN_SPLIT = "all_processed_data/train_split_Depression_AVEC2017.csv"
-DEV_SPLIT   = "all_processed_data/dev_split_Depression_AVEC2017.csv"
-TEST_SPLIT  = "all_processed_data/full_test_split.csv"
+GAZE_PATH  = SCRIPT_DIR / "au_long.csv"
+
+TRAIN_SPLIT = SCRIPT_DIR / "all_processed_data/train_split_Depression_AVEC2017.csv"
+DEV_SPLIT   = SCRIPT_DIR / "all_processed_data/dev_split_Depression_AVEC2017.csv"
+TEST_SPLIT  = SCRIPT_DIR / "all_processed_data/full_test_split.csv"
 
 
 # ======================================================
