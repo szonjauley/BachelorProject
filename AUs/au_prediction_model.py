@@ -24,9 +24,9 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 
 GAZE_PATH  = SCRIPT_DIR / "au_long.csv"
 
-TRAIN_SPLIT = SCRIPT_DIR / "all_processed_data/train_split_Depression_AVEC2017.csv"
-DEV_SPLIT   = SCRIPT_DIR / "all_processed_data/dev_split_Depression_AVEC2017.csv"
-TEST_SPLIT  = SCRIPT_DIR / "all_processed_data/full_test_split.csv"
+TRAIN_SPLIT = SCRIPT_DIR / "train_split_Depression_AVEC2017.csv"
+DEV_SPLIT   = SCRIPT_DIR / "dev_split_Depression_AVEC2017.csv"
+TEST_SPLIT  = SCRIPT_DIR / "full_test_split.csv"
 
 
 # ======================================================
