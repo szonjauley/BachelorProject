@@ -4,6 +4,7 @@ from pathlib import Path
 # Directory where the current script is located
 SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
 DATA_DIR = SCRIPT_DIR.parent / "data" # BachelorProject/data
+OUTPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
 
 def load_data(file: Path) -> pd.DataFrame:
     """
@@ -72,8 +73,7 @@ def main():
 
     combined = combine_files(files, segments)
 
-    output_path = DATA_DIR / "gaze_aggregation.csv"
-    combined.to_csv(output_path, index=False)
+    combined.to_csv(OUTPUT_PATH, index=False)
 
     return
 
