@@ -8,7 +8,7 @@ import numpy as np
 SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/AUs
 ROOT_DIR = SCRIPT_DIR.parent / "data" / "participant_folders" # BachelorProject/data/participant_folders
 FULL_TEST_PATH = SCRIPT_DIR.parent / "data" / "depression.csv" # BachelorProject/data/depression.csv
-OUTPUT_PATH = SCRIPT_DIR / "au_long.csv" # BachelorProject/data/au_long.csv
+OUTPUT_PATH = SCRIPT_DIR.parent / "data" / "au_aggregation.csv" # BachelorProject/data/au_aggregation.csv
 
 # Minimum confidence threshold for keeping the frames
 CONF_THRESH = 0.7
