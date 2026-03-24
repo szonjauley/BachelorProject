@@ -1,6 +1,15 @@
 import pandas as pd
 import numpy as np
 import statsmodels.formula.api as smf
+from pathlib import Path
+
+# Directory where the current script is located
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
+OUTPUT_PATH = DATA_DIR / "gaze_permutation.csv" # BachelorProject/data/gaze_permutation.csv
+
+N_PERM = 5000
 
 def prepare_data(file):
     """
@@ -62,3 +71,29 @@ def permutation_test(df, n_perm):
         "p_value": p_value,
         "significant": p_value < 0.05
     }])
+
+def main(file, n_perm):
+    data = prepare_data(file)
+
+    results = []
+
+    for metric in ["mean", "std"]:
+        df_metric = data[data["stat"] == metric].copy()
+
+        res_df = permutation_test(df_metric, n_perm)
+
+        # add stat column
+        res_df["stat"] = metric
+
+        results.append(res_df)
+
+    # combine results
+    results_df = pd.concat(results, ignore_index=True)
+
+    results_df.to_csv(OUTPUT_PATH, index=False)
+
+if __name__ == "__main__":
+    main(
+        file=INPUT_PATH,
+        n_perm=N_PERM
+    )
