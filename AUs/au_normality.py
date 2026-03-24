@@ -76,28 +76,11 @@ def compute_normality(df: pd.DataFrame) -> pd.DataFrame:
 
 def main(file: Path):
     df = load_data(file)
-
     normality_df = compute_normality(df)
-    normality_df.to_csv("au_normality.csv", index=False)
-
-    return
+    output_path = Path(__file__).parent.parent / "data" / "au_normality.csv"
+    normality_df.to_csv(output_path, index=False)
+    print("Saved:", output_path)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Normality check for AU values"
-    )
-
-    parser.add_argument(
-        "--file", 
-        type=str, 
-        required=True,
-        help="Path to au aggregation file"
-    )
-
-    args = parser.parse_args()
-
-    main(
-        file=Path(args.file)
-    )
-
-### example run: python au_normality.py --file au_long.csv
+    INPUT_PATH = Path(__file__).parent.parent / "data" / "au_aggregation.csv"
+    main(file=INPUT_PATH)
