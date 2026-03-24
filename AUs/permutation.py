@@ -82,48 +82,16 @@ def permutation_test_interaction(df, n_perm=5000):
 def main(input_file, metric, n_perm, output_folder):
     data = prepare_data(input_file, metric)
     results_df = permutation_test_interaction(data, n_perm)
-    results_df.to_csv(f"{output_folder}/permutation_results_{metric}.csv", index=False)
+    output_path = Path(output_folder) / f"permutation_results_{metric}.csv"
+    results_df.to_csv(output_path, index=False)
+    print("Saved:", output_path)
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(
-        description="Run permutation test on person level aggregated mean AU scores"
-    )
-
-    parser.add_argument(
-        "--input",
-        type=str,
-        required=True,
-        help="Path to au_long.csv"
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        default=str(Path.cwd()),
-        help="Path to folder for output file with test results"
-    )
-
-    parser.add_argument(
-        "--n_perm",
-        type=int,
-        default=5000,
-        help="Number of permutations"
-    )
-
-    parser.add_argument(
-    "--metric",
-    type=str,
-    default="mean",
-    choices=["mean", "std"],
-    help="Metric the permutation test should be run on"
-    )
-
-    args = parser.parse_args()
-
+    INPUT_PATH = Path(__file__).parent.parent / "data" / "au_aggregation.csv"
+    OUTPUT_FOLDER = Path(__file__).parent.parent / "data"
     main(
-        input_file=args.input,
-        output_folder=args.output,
-        n_perm=args.n_perm,
-        metric=args.metric
+        input_file=INPUT_PATH,
+        output_folder=OUTPUT_FOLDER,
+        n_perm=5000,
+        metric="mean"
     )
