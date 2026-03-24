@@ -13,7 +13,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SPEAKER_SCRIPT = os.path.join(SCRIPT_DIR, "ellie_participant_split.py")
 AUS_SCRIPT = os.path.join(SCRIPT_DIR, "aus_split.py")
 
-BASE_DIR = SCRIPT_DIR
+BASE_DIR = os.path.join(SCRIPT_DIR, "..", "data", "participant_folders")
 
 # Delete the zip files after successful extraction
 DELETE_ZIPS_AFTER_EXTRACT = True
