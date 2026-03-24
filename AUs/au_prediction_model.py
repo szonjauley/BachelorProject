@@ -26,7 +26,7 @@ DATA_DIR = SCRIPT_DIR.parent / "data"
 GAZE_PATH = DATA_DIR / "au_aggregation.csv"
 TRAIN_SPLIT = DATA_DIR / "all_processed_data" / "train_split_Depression_AVEC2017.csv"
 DEV_SPLIT = DATA_DIR / "all_processed_data" / "dev_split_Depression_AVEC2017.csv"
-TEST_SPLIT = DATA_DIR / "all_processed_data" / "full_test_split.csv""
+TEST_SPLIT = DATA_DIR / "all_processed_data" / "full_test_split.csv"
 
 
 # ======================================================
