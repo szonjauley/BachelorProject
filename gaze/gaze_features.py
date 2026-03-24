@@ -3,18 +3,17 @@ import numpy as np
 from pathlib import Path
 import argparse
 
-def load_data(file:Path, depression:str="all") -> pd.DataFrame:
-    """
-    Load clean data and filter for depression status
-    """
-    df = pd.read_csv(file)
+# Directory where the current script is located
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR = SCRIPT_DIR.parent / "data" # BachelorProject/data
+CLEANED_PATH = DATA_DIR / "gaze_cleaned_labeled_0.7.csv" # BachelorProject/data/gaze_cleaned_labeled_0.7.csv
 
-    if depression == "yes":
-        df = df[df["depression"]==1]
-    elif depression == "no":
-        df = df[df["depression"]==0]
+def load_data(file:Path) -> pd.DataFrame:
+    """
+    Load clean data 
+    """
 
-    return df
+    return pd.read_csv(file)
 
 def average_eyes(df:pd.DataFrame) -> pd.DataFrame:
     """
@@ -49,10 +48,10 @@ def get_delta(df:pd.DataFrame, group_cols:list) -> pd.DataFrame:
 
     return df
 
-def main(file:Path, depression:str):
+def main(file:Path):
 
     print("Loading data...")
-    df = load_data(file, depression)
+    df = load_data(file)
 
     print("Averaging eyes...")
     df = average_eyes(df)
@@ -61,35 +60,35 @@ def main(file:Path, depression:str):
     # --- ALL ---
     print("Creating file for all...")
     df_all = df.copy()
-    df_all["segment"] = (df_all["person_ID"] != df_all["person_ID"].shift()).cumsum()
-    df_all = get_delta(df_all, ["segment"])
+    df_all["segment_type"] = (df_all["person_id"] != df_all["person_id"].shift()).cumsum()
+    df_all = get_delta(df_all, ["segment_type"])
 
     # --- LISTENING ---
     print("Creating file for listening...")
     df_listening = df.copy()
     boundary = (
-        (df_listening["person_ID"] != df_listening["person_ID"].shift()) |
+        (df_listening["person_id"] != df_listening["person_id"].shift()) |
         (df_listening["speaker"] != df_listening["speaker"].shift())
     )
-    df_listening["segment"] = boundary.cumsum()
+    df_listening["segment_type"] = boundary.cumsum()
     df_listening = df_listening[df_listening["speaker"] == "Listening"]
-    df_listening = get_delta(df_listening, ["segment"])
+    df_listening = get_delta(df_listening, ["segment_type"])
 
     # --- SPEAKING ---
     print("Creating file for sepaking...")
     df_speaking = df.copy()
     boundary = (
-        (df_speaking["person_ID"] != df_speaking["person_ID"].shift()) |
+        (df_speaking["person_id"] != df_speaking["person_id"].shift()) |
         (df_speaking["speaker"] != df_speaking["speaker"].shift())
     )
-    df_speaking["segment"] = boundary.cumsum()
+    df_speaking["segment_type"] = boundary.cumsum()
     df_speaking = df_speaking[df_speaking["speaker"] == "Speaking"]
-    df_speaking = get_delta(df_speaking, ["segment"])
+    df_speaking = get_delta(df_speaking, ["segment_type"])
 
     print("Saving files...")
-    combined_file = f"combined_gaze_deltas_{depression}.csv"
-    listening_file = f"listening_gaze_deltas_{depression}.csv"
-    speaking_file = f"speaking_gaze_deltas_{depression}.csv"
+    combined_file = DATA_DIR / "combined_gaze_deltas.csv"
+    listening_file = DATA_DIR / "listening_gaze_deltas.csv"
+    speaking_file = DATA_DIR / "speaking_gaze_deltas.csv"
 
     df_all.to_csv(combined_file, index=False)
     df_listening.to_csv(listening_file, index=False)
@@ -99,28 +98,6 @@ def main(file:Path, depression:str):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(
-        description="Create gaze features"
-    )
-
-    parser.add_argument(
-        "--file",
-        type=str,
-        required=True,
-        help="Path to output file from gaze_preprocessing.py containing gaze values"
-    )
-
-    parser.add_argument(
-        "--depression",
-        type=str,
-        default="all",
-        choices=["all", "yes", "no"],
-        help="Depression status"
-    )
-
-    args = parser.parse_args()
-
     main(
-        file=args.file,
-        depression=args.depression
+        file=CLEANED_PATH
     )
