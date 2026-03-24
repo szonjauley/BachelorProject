@@ -21,12 +21,12 @@ USE_REDUCED_FEATURES = True   # True = only mean + std
 # PATHS
 # ======================================================
 SCRIPT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = SCRIPT_DIR.parent / "data"
 
-GAZE_PATH  = SCRIPT_DIR / "au_long.csv"
-
-TRAIN_SPLIT = SCRIPT_DIR / "train_split_Depression_AVEC2017.csv"
-DEV_SPLIT   = SCRIPT_DIR / "dev_split_Depression_AVEC2017.csv"
-TEST_SPLIT  = SCRIPT_DIR / "full_test_split.csv"
+GAZE_PATH = DATA_DIR / "au_aggregation.csv"
+TRAIN_SPLIT = DATA_DIR / "all_processed_data" / "train_split_Depression_AVEC2017.csv"
+DEV_SPLIT = DATA_DIR / "all_processed_data" / "dev_split_Depression_AVEC2017.csv"
+TEST_SPLIT = DATA_DIR / "all_processed_data" / "full_test_split.csv""
 
 
 # ======================================================
@@ -102,7 +102,7 @@ def run_experiment(feature_path, group_name):
     )
 
     test_merged = test_features.merge(
-        test_df[["Participant_ID", "PHQ8_Binary"]],
+        test_df[["Participant_ID", "PHQ_Binary"]],
         left_on="person_id",
         right_on="Participant_ID"
     )
@@ -126,7 +126,7 @@ def run_experiment(feature_path, group_name):
     y_train = train_merged["PHQ8_Binary"].values
 
     X_test = test_merged[feature_cols].values
-    y_test = test_merged["PHQ8_Binary"].values
+    y_test = test_merged["PHQ_Binary"].values
 
 
     # =========================
