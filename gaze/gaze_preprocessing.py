@@ -1,10 +1,18 @@
 import pandas as pd
 from pathlib import Path
-import argparse
+
+CONF_THRESH = 0.7
+
+# Directory where the current script is located
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+ROOT_DIR = SCRIPT_DIR.parent / "data" / "participant_folders" # BachelorProject/data/participant_folders
+DEPRESSION_PATH = SCRIPT_DIR.parent / "data" / "depression.csv" # BachelorProject/data/depression.csv
+COMBINED_PATH = SCRIPT_DIR / "gaze_combined_labeled.csv" # BachelorProject/data/gaze_combined_labeled.csv
+CLEANED_PATH = SCRIPT_DIR / f"gaze_cleaned_labeled_{CONF_THRESH}.csv" # BachelorProject/data/gaze_cleaned_labeled_0.7.csv
 
 def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
     """
-    Loads all gaze csv files into one dataframe with a person_ID column.
+    Loads all gaze csv files into one dataframe with a person_id column.
     Takes folder path for all participants' data and the label file as input and returns dataframe with additional ID column and labels
     """
     base_path = Path(base_folder)
@@ -21,7 +29,7 @@ def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
         df = pd.read_csv(file_path)
         df.columns = df.columns.str.strip()
 
-        df["person_ID"] = person_id
+        df["person_id"] = person_id
         dfs.append(df)
 
     if not dfs:
@@ -33,14 +41,14 @@ def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
 
     labelmap = depression_values.set_index("Participant_ID")["PHQ8_Binary"]
     labelmap.index = labelmap.index.astype(str)
-    data["depression"] = data["person_ID"].map(labelmap)
+    data["depressed"] = data["person_id"].map(labelmap)
 
     return data
 
-def clean_data(data:pd.DataFrame, confidence:float=0.7) ->pd.DataFrame:
+def clean_data(data:pd.DataFrame, confidence:float) ->pd.DataFrame:
     """
     Takes the combined data, filters it for the specified confidence and successful frames and removes all non-gaze columns
-    Returns clean data indexed by person_ID including depression labels and segment type
+    Returns clean data indexed by person_id including depression labels and segment type
     """
     data = data[
         (data["confidence"] > confidence) &
@@ -49,11 +57,11 @@ def clean_data(data:pd.DataFrame, confidence:float=0.7) ->pd.DataFrame:
 
     non_gaze_cols = ["frame", "timestamp", "confidence", "success"]
     data = data.drop(columns=non_gaze_cols)
-    data = data.set_index("person_ID")
+    data = data.set_index("person_id")
 
     return data
 
-def main(base_folder, depression_file, confidence=0.7):
+def main(base_folder:Path, depression_file:Path, confidence:float):
 
     print("Loading data...")
     combined = load_all_data(base_folder, depression_file)
@@ -61,49 +69,18 @@ def main(base_folder, depression_file, confidence=0.7):
     print("Cleaning data...")
     cleaned = clean_data(combined, confidence)
 
-    # Save
-    combined_file = f"combined_gaze_labeled.csv"
-    cleaned_file = f"cleaned_gaze_labeled_{confidence}.csv"
-
     print(f"\nSaved:")
-    combined.to_csv(combined_file, index=False)
-    print(combined_file)
-    cleaned.to_csv(cleaned_file)
-    print(cleaned_file)
+    combined.to_csv(COMBINED_PATH, index=False)
+    print(COMBINED_PATH)
+    cleaned.to_csv(CLEANED_PATH)
+    print(CLEANED_PATH)
 
     return
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(
-        description="Combine and clean gaze values"
-    )
-
-    parser.add_argument(
-        "--folder",
-        type=str,
-        required=True,
-        help="Path to base folder containing person directories"
-    )
-
-    parser.add_argument(
-        "--file",
-        type=str,
-        required=True,
-        help="Path to file containing depression values"
-    )
-
-    parser.add_argument(
-        "--confidence",
-        type=float,
-        default=0.7,
-        help="Minimum confidence threshold"
-    )
-
-    args = parser.parse_args()
-
     main(
-        base_folder=args.folder,
-        depression_file=args.file,
-        confidence=args.confidence
+        base_folder=ROOT_DIR,
+        depression_file=DEPRESSION_PATH,
+        confidence=CONF_THRESH
     )
