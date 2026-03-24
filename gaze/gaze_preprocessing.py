@@ -5,10 +5,11 @@ CONF_THRESH = 0.7
 
 # Directory where the current script is located
 SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
-ROOT_DIR = SCRIPT_DIR.parent / "data" / "participant_folders" # BachelorProject/data/participant_folders
-DEPRESSION_PATH = SCRIPT_DIR.parent / "data" / "depression.csv" # BachelorProject/data/depression.csv
-COMBINED_PATH = SCRIPT_DIR / "gaze_combined_labeled.csv" # BachelorProject/data/gaze_combined_labeled.csv
-CLEANED_PATH = SCRIPT_DIR / f"gaze_cleaned_labeled_{CONF_THRESH}.csv" # BachelorProject/data/gaze_cleaned_labeled_0.7.csv
+DATA_DIR = SCRIPT_DIR.parent / "data" # BachelorProject/data
+ROOT_DIR = DATA_DIR / "participant_folders" # BachelorProject/data/participant_folders
+DEPRESSION_PATH = DATA_DIR / "depression.csv" # BachelorProject/data/depression.csv
+COMBINED_PATH = DATA_DIR / "gaze_combined_labeled.csv" # BachelorProject/data/gaze_combined_labeled.csv
+CLEANED_PATH = DATA_DIR / f"gaze_cleaned_labeled_{CONF_THRESH}.csv" # BachelorProject/data/gaze_cleaned_labeled_0.7.csv
 
 def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
     """
