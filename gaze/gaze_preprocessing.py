@@ -33,7 +33,7 @@ def load_all_data(base_folder:Path, depression_file:Path) -> pd.DataFrame:
         dfs.append(df)
 
     if not dfs:
-        raise ValueError("No AU files found.")
+        raise ValueError("No gaze files found.")
 
     data = pd.concat(dfs, ignore_index=True)
 
