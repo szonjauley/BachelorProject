@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 # Load data
-CSV_PATH = "cleaned_gaze_labeled_0_7.csv"
+CSV_PATH = "cleaned_gaze_labeled_0.7.csv"
 df = pd.read_csv(CSV_PATH)
 
 # Compute global limits across ALL person IDs
