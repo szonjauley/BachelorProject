@@ -101,7 +101,7 @@ def run_experiment(feature_path, group_name):
     )
 
     test_merged = test_features.merge(
-        test_df[["Participant_ID", "PHQ8_Binary"]],
+        test_df[["Participant_ID", "PHQ_Binary"]],
         left_on="person_ID",
         right_on="Participant_ID"
     )
@@ -125,7 +125,7 @@ def run_experiment(feature_path, group_name):
     y_train = train_merged["PHQ8_Binary"].values
 
     X_test = test_merged[feature_cols].values
-    y_test = test_merged["PHQ8_Binary"].values
+    y_test = test_merged["PHQ_Binary"].values
 
 
     # =========================
