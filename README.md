@@ -294,7 +294,6 @@ Output:
 ## Notes
 
 - The AU pipeline and gaze pipeline can be run in either order.
-- All output folders will be created in their respective locations if they do not already exist.
 - Make sure the required data files are placed in the expected locations before running the scripts.
 
 ---
