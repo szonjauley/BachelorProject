@@ -4,7 +4,7 @@
 
 This repository contains a full pipeline for preprocessing, feature extraction, aggregation, statistical analysis, and prediction modeling for **AU** (Action Unit) and **gaze** data.
 
-The AU and gaze pipelines can be run independently, and the order between the AU pipeline and the gaze pipeline does **not** matter.
+The AU pipeline **must** be run first as the gaze pipeline depends on `xxx_speaker_segments.csv`.
 
 ## Repository Structure
 
@@ -160,7 +160,21 @@ Output:
 
 ## Gaze Pipeline
 
-### 1. Preprocess gaze data
+### 1. Create labeled gaze segment files
+Run:
+
+```bash
+python gaze_label.py
+```
+
+This script uses:
+
+- `xxx_CLNF_gaze.txt`
+- `xxx_speaker_segments.csv`
+
+It creates `xxx_CLNF_gaze_labeled.csv` inside each participant folder in `participant_folders/`.
+
+### 2. Preprocess gaze data
 Run:
 
 ```bash
@@ -173,7 +187,7 @@ Output:
 
 - `gaze_cleaned_labeled_0.7.csv` saved in `data/`
 
-### 2. Extract gaze features
+### 3. Extract gaze features
 Run:
 
 ```bash
@@ -190,7 +204,7 @@ Outputs:
 
 All files are saved in `data/`.
 
-### 3. Create gaze aggregation file
+### 4. Create gaze aggregation file
 Run:
 
 ```bash
@@ -203,7 +217,7 @@ Output:
 
 - `gaze_aggregation.csv` saved in `data/`
 
-### 4. Check gaze normality
+### 5. Check gaze normality
 Run:
 
 ```bash
@@ -216,7 +230,7 @@ Output:
 
 - `gaze_normality.csv` saved in `output/gaze/`
 
-### 5. Create gaze boxplots
+### 6. Create gaze boxplots
 Run:
 
 ```bash
@@ -229,7 +243,7 @@ Output:
 
 - `boxplots/` folder saved in `output/gaze/`
 
-### 6. Run gaze statistical tests
+### 7. Run gaze statistical tests
 Run:
 
 ```bash
@@ -245,7 +259,7 @@ Output:
   
 Both files are saved in `output/gaze/`.
 
-### 7. Run gaze permutation test
+### 8. Run gaze permutation test
 Run:
 
 ```bash
@@ -258,7 +272,7 @@ Output:
 
 - `gaze_permutation.csv` saved in `output/gaze/`
 
-### 8. Run gaze regression analysis
+### 9. Run gaze regression analysis
 Run:
 
 ```bash
@@ -274,7 +288,7 @@ Output:
 
 Both files are saved in `gaze/output/`.
 
-### 9. Run gaze prediction model
+### 10. Run gaze prediction model
 Run:
 
 ```bash
@@ -299,14 +313,11 @@ Output:
 
 ## Notes
 
-- The AU pipeline and gaze pipeline can be run in either order.
 - Make sure the required data files are placed in the expected locations before running the scripts.
 
 ---
 
 ## Suggested Run Order
-
-Although the AU and gaze pipelines are independent, a typical end-to-end run order is:
 
 1. `au_split_automation.py`
 2. `au_aggregation.py`
@@ -316,15 +327,16 @@ Although the AU and gaze pipelines are independent, a typical end-to-end run ord
 6. `au_permutation.py`
 7. `au_regression_analysis.py`
 8. `au_prediction_model.py`
-9. `gaze_preprocessing.py`
-10. `gaze_features.py`
-11. `gaze_aggregation.py`
-12. `gaze_normality.py`
-13. `gaze_boxplot_analysis.py`
-14. `gaze_statistical_tests.py`
-15. `gaze_permutation.py`
-16. `gaze_regression_analysis.py`
-17. `gaze_prediction_model.py`
+9. `gaze_label.py`
+10. `gaze_preprocessing.py`
+11. `gaze_features.py`
+12. `gaze_aggregation.py`
+13. `gaze_normality.py`
+14. `gaze_boxplot_analysis.py`
+15. `gaze_statistical_tests.py`
+16. `gaze_permutation.py`
+17. `gaze_regression_analysis.py`
+18. `gaze_prediction_model.py`
 
-You can also run the gaze pipeline before the AU pipeline.
+You can also run the gaze pipeline after running the `au_split_automation.py` file.
 
