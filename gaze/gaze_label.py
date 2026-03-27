@@ -2,8 +2,14 @@ import argparse
 import os
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
-
+# -----------------------------
+# PATHS
+# -----------------------------
+SCRIPT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = SCRIPT_DIR.parent / "data"
+ROOT_DIR = DATA_DIR / "participant_folders"
 
 
 def label_timestamps_with_segments(au_df: pd.DataFrame, segments_df: pd.DataFrame) -> pd.DataFrame:
@@ -66,28 +72,21 @@ def label_timestamps_with_segments(au_df: pd.DataFrame, segments_df: pd.DataFram
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("root_dir", help="Root directory containing XXX_P folders")
-    args = parser.parse_args()
+    for folder_name in sorted(os.listdir(ROOT_DIR)):
+        folder_path = ROOT_DIR / folder_name
 
-    root = args.root_dir
-
-    for folder_name in sorted(os.listdir(root)):
-        folder_path = os.path.join(root, folder_name)
-
-        # Skip anything that doesn't match the XXX_P pattern
-        if not os.path.isdir(folder_path) or not folder_name.endswith("_P"):
+        if not folder_path.is_dir() or not folder_name.endswith("_P"):
             continue
 
         participant_id = folder_name.replace("_P", "")
 
-        gaze_file = os.path.join(folder_path, f"{participant_id}_CLNF_gaze.txt")
-        segments_file = os.path.join(folder_path, f"{participant_id}_speaker_segments.csv")
+        gaze_file = folder_path / f"{participant_id}_CLNF_gaze.txt"
+        segments_file = folder_path / f"{participant_id}_speaker_segments.csv"
 
-        if not os.path.exists(gaze_file):
+        if not gaze_file.exists():
             print(f"[{folder_name}] Missing gaze file, skipping.")
             continue
-        if not os.path.exists(segments_file):
+        if not segments_file.exists():
             print(f"[{folder_name}] Missing segments file, skipping.")
             continue
 
@@ -101,7 +100,7 @@ def main():
 
         labeled = label_timestamps_with_segments(au_df, segments_df)
 
-        out_path = os.path.join(folder_path, f"{participant_id}_CLNF_gaze_labeled.csv")
+        out_path = folder_path / f"{participant_id}_CLNF_gaze_labeled.csv"
         labeled.to_csv(out_path, index=False)
 
         print(f"[{folder_name}] Done. Kept {len(labeled)} of {len(au_df)} rows -> {out_path}")
