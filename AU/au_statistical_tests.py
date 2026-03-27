@@ -16,7 +16,7 @@ INPUT_FILE = DATA_DIR / "au_aggregation.csv"
 # CONFIGURATION
 # -----------------------------
 STATISTICS = ["mean", "std"]
-ALPHA = 0.05
+ALPHA = 0.05/14
 
 # -----------------------------
 # HELPER FUNCTIONS
