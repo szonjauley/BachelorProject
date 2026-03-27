@@ -11,7 +11,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Absolute paths to the two helper scripts
 SPEAKER_SCRIPT = os.path.join(SCRIPT_DIR, "ellie_participant_split.py")
-AUS_SCRIPT = os.path.join(SCRIPT_DIR, "aus_split.py")
+AUS_SCRIPT = os.path.join(SCRIPT_DIR, "au_split.py")
 
 BASE_DIR = os.path.join(SCRIPT_DIR, "..", "data", "participant_folders")
 
