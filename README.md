@@ -26,11 +26,11 @@ root/
 ### Required data files
 
 - `data/depression.csv`
-- `data/splits/`
 - `data/participant_folders/`
-- `data/participant_folders/train_split_Depression_AVEC2017.csv`
-- `data/participant_folders/full_test_split.csv`
-- `data/participant_folders/dev_split_Depression_AVEC2017.csv`
+- `data/splits/`
+- `data/splits/train_split_Depression_AVEC2017.csv`
+- `data/splits/full_test_split.csv`
+- `data/splits/dev_split_Depression_AVEC2017.csv`
 
 ---
 
