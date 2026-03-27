@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, f1_score
 # ======================================================
 # CONTROL SWITCHES
 # ======================================================
-RUN_TEST = False
+RUN_TEST = True
 USE_REDUCED_FEATURES = True   # True = only mean + std
 
 
@@ -22,12 +22,12 @@ USE_REDUCED_FEATURES = True   # True = only mean + std
 # ======================================================
 SCRIPT_DIR = Path(__file__).parent.resolve()
 DATA_DIR = SCRIPT_DIR.parent / "data"
+OUTPUT_PATH = SCRIPT_DIR.parent / "output" / "AU" / "au_prediction_model.txt"
 
 GAZE_PATH = DATA_DIR / "au_aggregation.csv"
-TRAIN_SPLIT = DATA_DIR / "all_processed_data" / "train_split_Depression_AVEC2017.csv"
-DEV_SPLIT = DATA_DIR / "all_processed_data" / "dev_split_Depression_AVEC2017.csv"
-TEST_SPLIT = DATA_DIR / "all_processed_data" / "full_test_split.csv"
-
+TRAIN_SPLIT = DATA_DIR / "splits" / "train_split_Depression_AVEC2017.csv"
+DEV_SPLIT = DATA_DIR / "splits" / "dev_split_Depression_AVEC2017.csv"
+TEST_SPLIT = DATA_DIR / "splits" / "full_test_split.csv"
 
 # ======================================================
 # LOAD SPLITS
@@ -216,6 +216,13 @@ def run_experiment(feature_path, group_name):
 # ======================================================
 # RUN ALL GROUPS
 # ======================================================
-log_combined, rf_combined = run_experiment(GAZE_PATH, "COMBINED")
-log_listening, rf_listening = run_experiment(GAZE_PATH, "LISTENING")
-log_speaking, rf_speaking = run_experiment(GAZE_PATH, "SPEAKING")
+OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+with open(OUTPUT_PATH, "w") as f:
+    sys.stdout = f
+    log_combined,  rf_combined  = run_experiment(GAZE_PATH, "COMBINED")
+    log_listening, rf_listening = run_experiment(GAZE_PATH, "LISTENING")
+    log_speaking,  rf_speaking  = run_experiment(GAZE_PATH, "SPEAKING")
+    sys.stdout = sys.__stdout__
+
+print(f"Log saved to: {OUTPUT_PATH}")
