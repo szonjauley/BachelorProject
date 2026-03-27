@@ -53,7 +53,7 @@ for stat in STATISTICS:
         print(f"Interaction p-value: {interaction_p:.4f}")
         print(f"R^2: {model.rsquared:.4f}")
 
-        if interaction_p > 0.05:
+        if interaction_p > 0.05/14:
             print("No evidence that the speaking-listening difference depends on depression status.")
         else:
             print("Evidence that the speaking-listening difference depends on depression status.")
