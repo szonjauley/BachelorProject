@@ -1,20 +1,22 @@
 import os
 import pandas as pd
 import statsmodels.formula.api as smf
+from pathlib import Path
 
 # ======================================================
-# CONFIGURATION
+# PATHS
 # ======================================================
-INPUT_FILE = "gaze_aggregation.csv"
-OUTPUT_DIR = "interaction_regression_results_delta"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "gaze" # BachelorProject/output/gaze
+INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
 
 STATISTICS = ["mean", "std"]
 
 # ======================================================
 # LOAD DATA
 # ======================================================
-df = pd.read_csv(INPUT_FILE)
+df = pd.read_csv(INPUT_PATH)
 
 # Keep only speaking and listening rows for the interaction model
 df = df[df["segment"].isin(["speaking", "listening"])].copy()
@@ -55,6 +57,6 @@ for stat in STATISTICS:
         "n": int(model.nobs),
     }])
 
-    out_path = os.path.join(OUTPUT_DIR, f"interaction_regression_results_{stat}.csv")
+    out_path = os.path.join(OUTPUT_DIR, f"gaze_interaction_regression_{stat}.csv")
     results.to_csv(out_path, index=False)
     print(f"Saved results to {out_path}")
