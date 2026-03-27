@@ -16,8 +16,8 @@ root/
 ├── gaze_output/
 └── data/
     ├── depression.csv
-    ├── splits/
-    └── participant_folders/
+    ├── participant_folders/
+    └── splits/
         ├── train_split_Depression_AVEC2017.csv
         ├── full_test_split.csv
         └── dev_split_Depression_AVEC2017.csv
