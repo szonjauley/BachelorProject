@@ -237,7 +237,10 @@ This script uses `gaze_aggregation.py` output to perform statistical tests on th
 
 Output:
 
-- `statistical_tests/` folder saved in `gaze_output/`
+- `gaze_stat_test_mean.csv`
+- `gaze_stat_test_std.csv`
+  
+Both files are saved in `gaze_output/`.
 
 ### 7. Run gaze permutation test
 Run:
