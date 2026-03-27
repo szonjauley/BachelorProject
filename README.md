@@ -123,7 +123,7 @@ Output:
 Run:
 
 ```bash
-python au_regression_modelling.py.py
+python au_regression_modelling.py
 ```
 
 This script uses `au_aggregation.py` output to perform interaction regression on the AU.
@@ -276,7 +276,7 @@ Output:
 Run:
 
 ```bash
-python gaze_regression_modelling.py.py
+python gaze_regression_modelling.py
 ```
 
 This script uses `gaze_aggregation.py` output to perform interaction regression on the gaze features.
@@ -325,7 +325,7 @@ Output:
 4. `au_boxplot_analysis.py`
 5. `au_statistical_tests.py`
 6. `au_permutation.py`
-7. `au_regression_modelling.py.py`
+7. `au_regression_modelling.py`
 8. `au_prediction_model.py`
 9. `gaze_label.py`
 10. `gaze_preprocessing.py`
@@ -335,7 +335,7 @@ Output:
 14. `gaze_boxplot_analysis.py`
 15. `gaze_statistical_tests.py`
 16. `gaze_permutation.py`
-17. `gaze_regression_modelling.py.py`
+17. `gaze_regression_modelling.py`
 18. `gaze_prediction_model.py`
 
 You can also run the gaze pipeline after running the `au_split_automation.py` file.
