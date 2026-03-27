@@ -6,8 +6,9 @@ from pathlib import Path
 # Directory where the current script is located
 SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
 DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" # BachelorProject/output
 INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
-OUTPUT_PATH = DATA_DIR / "gaze_permutation.csv" # BachelorProject/data/gaze_permutation.csv
+OUTPUT_PATH = OUTPUT_DIR / "gaze" / "gaze_permutation.csv" # BachelorProject/output/gaze/gaze_permutation.csv
 
 N_PERM = 5000
 
