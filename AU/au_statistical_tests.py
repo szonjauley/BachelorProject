@@ -3,13 +3,18 @@ import pandas as pd
 from scipy.stats import mannwhitneyu, wilcoxon
 
 # -----------------------------
+# PATHS
+# -----------------------------
+SCRIPT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = SCRIPT_DIR.parent / "data"
+OUTPUT_DIR = SCRIPT_DIR.parent / "output" / "AU" / "statistical_tests"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+INPUT_FILE = DATA_DIR / "au_aggregation.csv"
+
+# -----------------------------
 # CONFIGURATION
 # -----------------------------
-
-INPUT_FILE = "au_long.csv"
-OUTPUT_DIR = "statistical_tests"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 STATISTICS = ["mean", "std"]
 ALPHA = 0.05
 
