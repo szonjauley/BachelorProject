@@ -1,10 +1,13 @@
 import os
 import pandas as pd
 from scipy.stats import mannwhitneyu, wilcoxon
+from pathlib import Path
 
-INPUT_FILE = "gaze_aggregation.csv"
-OUTPUT_DIR = "statistical_tests_long_minimal"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# PATHS
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "gaze" # BachelorProject/output/gaze
+INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
 
 STATISTICS = ["mean", "std"]
 ALPHA = 0.05
@@ -104,11 +107,11 @@ def run_tests(df, stat_name):
     return pd.DataFrame(results)
 
 def main():
-    df = pd.read_csv(INPUT_FILE)
+    df = pd.read_csv(INPUT_PATH)
 
     for stat in STATISTICS:
         results_df = run_tests(df, stat)
-        output_path = os.path.join(OUTPUT_DIR, f"results_{stat}.csv")
+        output_path = os.path.join(OUTPUT_DIR, f"gaze_stat_test_{stat}.csv")
         results_df.to_csv(output_path, index=False)
         print(f"Saved: {output_path}")
         print(results_df.to_string(index=False))
