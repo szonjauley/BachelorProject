@@ -12,8 +12,11 @@ At the root of the project, the following folders should exist:
 
 ```text
 root/
-├── au_output/
-├── gaze_output/
+├── output/
+│   ├── au/
+│   │   └── boxplots/
+│   └── gaze/
+│       └── boxplots/
 └── data/
     ├── depression.csv
     ├── participant_folders/
@@ -75,7 +78,7 @@ This script uses `au_aggregations.csv` to test whether each AU is normally distr
 
 Output:
 
-- `au_normality.csv` saved in `au_output/`
+- `au_normality.csv` saved in `output/au/`
 
 ### 4. Create AU boxplots
 Run:
@@ -88,7 +91,7 @@ This script uses `au_aggregation.py` output to create boxplots for each AU.
 
 Output:
 
-- `boxplots/` folder with 10 boxplots saved in `au_output/`
+- `boxplots/` folder with 10 boxplots saved in `output/au/`
 
 ### 5. Run AU statistical tests
 Run:
@@ -101,7 +104,7 @@ This script uses `au_aggregation.py` output to perform statistical tests for eac
 
 Output:
 
-- `statistical_tests/` folder saved in `au_output/`
+- `statistical_tests/` folder saved in `output/au/`
 
 ### 6. Run AU permutation test
 Run:
@@ -114,7 +117,7 @@ This script uses `au_aggregation.py` output to perform a permutation test on the
 
 Output:
 
-- `au_permutation.csv` saved in `au_output/`
+- `au_permutation.csv` saved in `output/au/`
 
 ### 7. Run AU regression analysis
 Run:
@@ -130,7 +133,7 @@ Output:
 - `au_interaction_regression_mean.csv`
 - `au_interaction_regression_std.csv`
 
-Both files are saved in `au_output/`.
+Both files are saved in `output/au/`.
 
 ### 8. Run AU prediction model
 Run:
@@ -207,11 +210,11 @@ Run:
 python gaze_normality.py
 ```
 
-This script uses `gaze_aggregation.csv` to test whether each delta feature is normally distributed.
+This script uses `gaze_aggregation.csv` to test whether the delta feature is normally distributed.
 
 Output:
 
-- `gaze_normality.csv` saved in `gaze_output/`
+- `gaze_normality.csv` saved in `output/gaze/`
 
 ### 5. Create gaze boxplots
 Run:
@@ -224,7 +227,7 @@ This script uses `gaze_aggregation.py` output to create boxplots for the gaze fe
 
 Output:
 
-- `boxplots/` folder saved in `gaze_output/`
+- `boxplots/` folder saved in `output/gaze/`
 
 ### 6. Run gaze statistical tests
 Run:
@@ -240,7 +243,7 @@ Output:
 - `gaze_stat_test_mean.csv`
 - `gaze_stat_test_std.csv`
   
-Both files are saved in `gaze_output/`.
+Both files are saved in `output/gaze/`.
 
 ### 7. Run gaze permutation test
 Run:
@@ -253,7 +256,7 @@ This script uses `gaze_aggregation.py` output to perform a permutation test on t
 
 Output:
 
-- `gaze_permutation.csv` saved in `gaze_output/`
+- `gaze_permutation.csv` saved in `output/gaze/`
 
 ### 8. Run gaze regression analysis
 Run:
@@ -269,7 +272,7 @@ Output:
 - `gaze_interaction_regression_mean.csv`
 - `gaze_interaction_regression_std.csv`
 
-Both files are saved in `gaze_output/`.
+Both files are saved in `gaze/output/`.
 
 ### 9. Run gaze prediction model
 Run:
