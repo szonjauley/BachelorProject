@@ -12,25 +12,25 @@ INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggre
 STATISTICS = ["mean", "std"]
 ALPHA = 0.05
 
-def get_group(df, stat, segment, depression=None):
-    subset = df[(df["stat"] == stat) & (df["segment"] == segment)]
-    if depression is not None:
-        subset = subset[subset["depression"] == depression]
+def get_group(df, stat, segment_type, depressed=None):
+    subset = df[(df["stat"] == stat) & (df["segment_type"] == segment_type)]
+    if depressed is not None:
+        subset = subset[subset["depressed"] == depressed]
     return subset
 
 def paired_test(df1, df2):
     merged = pd.merge(
-        df1[["person_ID", "delta_deg"]],
-        df2[["person_ID", "delta_deg"]],
-        on="person_ID",
+        df1[["person_id", "value"]],
+        df2[["person_id", "value"]],
+        on="person_id",
         suffixes=("_1", "_2")
     )
-    stat, p = wilcoxon(merged["delta_deg_1"], merged["delta_deg_2"])
+    stat, p = wilcoxon(merged["value_1"], merged["value_2"])
     return stat, p, len(merged)
 
 def independent_test(df1, df2):
-    x = df1["delta_deg"]
-    y = df2["delta_deg"]
+    x = df1["value"]
+    y = df2["value"]
     stat, p = mannwhitneyu(x, y, alternative="two-sided")
     return stat, p, len(x), len(y)
 

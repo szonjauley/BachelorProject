@@ -10,21 +10,21 @@ DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
 OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "gaze" / "boxplots" # BachelorProject/output/gaze/boxplots
 INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
 
-STATISTICS = ["mean", "std"]
+statS = ["mean", "std"]
 
 # -----------------------------
 # HELPER FUNCTIONS
 # -----------------------------
-def get_group(df, statistic, segment, depressed=None):
-    subset = df[(df["stat"] == statistic) & (df["segment"] == segment)]
+def get_group(df, stat, segment_type, depressed=None):
+    subset = df[(df["stat"] == stat) & (df["segment_type"] == segment_type)]
     if depressed is not None:
-        subset = subset[subset["depression"] == depressed]
+        subset = subset[subset["depressed"] == depressed]
     return subset.copy()
 
-def plot_comparison(df, label_1, label_2, statistic, filename,
-                    segment_1, segment_2, depressed_1=None, depressed_2=None):
-    df_1 = get_group(df, statistic, segment_1, depressed_1)
-    df_2 = get_group(df, statistic, segment_2, depressed_2)
+def plot_comparison(df, label_1, label_2, stat, filename,
+                    segment_type_1, segment_type_2, depressed_1=None, depressed_2=None):
+    df_1 = get_group(df, stat, segment_type_1, depressed_1)
+    df_2 = get_group(df, stat, segment_type_2, depressed_2)
 
     df_1["group"] = label_1
     df_2["group"] = label_2
@@ -32,9 +32,10 @@ def plot_comparison(df, label_1, label_2, statistic, filename,
     plot_df = pd.concat([df_1, df_2], ignore_index=True)
 
     plt.figure(figsize=(10, 6))
-    sns.boxplot(data=plot_df, x="group", y="delta_deg")
+    sns.boxplot(data=plot_df, x="group", y="value")
+    plt.ylabel("delta_deg")
     plt.xticks(rotation=20)
-    plt.title(f"{label_1} vs {label_2} ({statistic})")
+    plt.title(f"{label_1} vs {label_2} ({stat})")
     plt.tight_layout()
 
     save_path = os.path.join(OUTPUT_DIR, filename)
@@ -65,17 +66,17 @@ comparisons = [
     ("Speaking Non-Depressed", "Speaking Depressed", "speaking", "speaking", 0, 1, "speaking_non_dep_vs_dep"),
 ]
 
-for statistic in STATISTICS:
+for stat in statS:
     for label1, label2, seg1, seg2, dep1, dep2, base_name in comparisons:
-        filename = f"{statistic}_{base_name}.png"
+        filename = f"{stat}_{base_name}.png"
         plot_comparison(
             df=df,
             label_1=label1,
             label_2=label2,
-            statistic=statistic,
+            stat=stat,
             filename=filename,
-            segment_1=seg1,
-            segment_2=seg2,
+            segment_type_1=seg1,
+            segment_type_2=seg2,
             depressed_1=dep1,
             depressed_2=dep2
         )

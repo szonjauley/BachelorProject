@@ -70,9 +70,6 @@ def main(base_folder:Path, depression_file:Path, confidence:float):
     print("Cleaning data...")
     cleaned = clean_data(combined, confidence)
 
-    print(f"\nSaved:")
-    combined.to_csv(COMBINED_PATH, index=False)
-    print(COMBINED_PATH)
     cleaned.to_csv(CLEANED_PATH)
     print(CLEANED_PATH)
 
