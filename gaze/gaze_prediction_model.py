@@ -56,27 +56,27 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 # ======================================================
 # FEATURE LOADING
 # ======================================================
-def load_gaze_features(path, segment_filter):
+def load_gaze_features(path, segment_type_filter):
     """
     Load long-format gaze data and pivot it to wide person-level features
-    for one segment only.
+    for one segment_type only.
 
     Example output columns:
-        person_ID, all_mean, all_std
-        person_ID, listening_mean, listening_std
-        person_ID, speaking_mean, speaking_std
+        person_id, all_mean, all_std
+        person_id, listening_mean, listening_std
+        person_id, speaking_mean, speaking_std
     """
     df = pd.read_csv(path)
-    df = df[df["segment"] == segment_filter].copy()
+    df = df[df["segment_type"] == segment_type_filter].copy()
 
     df_wide = df.pivot_table(
-        index="person_ID",
-        columns=["segment", "stat"],
-        values="delta_deg",
+        index="person_id",
+        columns=["segment_type", "stat"],
+        values="value",
         aggfunc="first"
     )
 
-    df_wide.columns = [f"{segment}_{stat}" for segment, stat in df_wide.columns]
+    df_wide.columns = [f"{segment_type}_{stat}" for segment_type, stat in df_wide.columns]
     df_wide = df_wide.reset_index()
 
     return df_wide
@@ -99,18 +99,18 @@ def run_experiment(feature_path, group_name):
         raise ValueError(f"Unknown group_name: {group_name}")
 
     # FILTER DATA
-    train_features = df_features[df_features["person_ID"].isin(train_ids)]
-    test_features  = df_features[df_features["person_ID"].isin(test_ids)]
+    train_features = df_features[df_features["person_id"].isin(train_ids)]
+    test_features  = df_features[df_features["person_id"].isin(test_ids)]
 
     train_merged = train_features.merge(
         train_dev_df[["Participant_ID", "PHQ8_Binary"]],
-        left_on="person_ID",
+        left_on="person_id",
         right_on="Participant_ID"
     )
 
     test_merged = test_features.merge(
         test_df[["Participant_ID", "PHQ_Binary"]],
-        left_on="person_ID",
+        left_on="person_id",
         right_on="Participant_ID"
     )
 
@@ -126,7 +126,7 @@ def run_experiment(feature_path, group_name):
     else:
         print("Using FULL feature set")
         feature_cols = train_merged.drop(
-            columns=["person_ID", "Participant_ID", "PHQ8_Binary"]
+            columns=["person_id", "Participant_ID", "PHQ8_Binary"]
         ).columns
 
     X_train = train_merged[feature_cols].values
