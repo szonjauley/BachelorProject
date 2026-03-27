@@ -77,7 +77,8 @@ def compute_normality(df: pd.DataFrame) -> pd.DataFrame:
 def main(file: Path):
     df = load_data(file)
     normality_df = compute_normality(df)
-    output_path = Path(__file__).parent.parent / "data" / "au_normality.csv"
+    output_path = Path(__file__).parent.parent / "output" / "AU" / "au_normality.csv"
+    output_path.parent.mkdir(parents=True, exist_ok=True)  # ensures the dir exists
     normality_df.to_csv(output_path, index=False)
     print("Saved:", output_path)
 
