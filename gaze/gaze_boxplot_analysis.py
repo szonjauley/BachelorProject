@@ -2,13 +2,13 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
-# -----------------------------
-# CONFIGURATION
-# -----------------------------
-INPUT_FILE = "gaze_aggregation.csv"
-OUTPUT_DIR = "boxplots"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# PATHS
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "gaze" / "boxplots" # BachelorProject/output/gaze/boxplots
+INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
 
 STATISTICS = ["mean", "std"]
 
@@ -46,7 +46,7 @@ def plot_comparison(df, label_1, label_2, statistic, filename,
 # -----------------------------
 # RUN ALL COMPARISONS
 # -----------------------------
-df = pd.read_csv(INPUT_FILE)
+df = pd.read_csv(INPUT_PATH)
 
 comparisons = [
     # 1. All speaking vs all listening
