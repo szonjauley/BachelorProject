@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import sys
 
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -10,23 +11,27 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, f1_score
 
 
+
+
 # ======================================================
 # CONTROL SWITCHES
 # ======================================================
-RUN_TEST = False
+RUN_TEST = True
 USE_REDUCED_FEATURES = True   # True = only mean + std
+
 
 # ======================================================
 # PATHS
 # ======================================================
-SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
-DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
-SPLIT_DIR = DATA_DIR / "splits" # BachelorProject/data/splits
-OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "gaze" # BachelorProject/output/gaze
-INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
-TRAIN_SPLIT = SPLIT_DIR / "train_split_Depression_AVEC2017.csv" # BachelorProject/data/splits/train_split_Depression_AVEC2017.csv
-DEV_SPLIT   = SPLIT_DIR / "dev_split_Depression_AVEC2017.csv" # BachelorProject/data/splits/dev_split_Depression_AVEC2017.csv
-TEST_SPLIT  = SPLIT_DIR / "full_test_split.csv" # BachelorProject/data/splits/full_test_split.csv
+SCRIPT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = SCRIPT_DIR.parent / "data"
+OUTPUT_PATH = SCRIPT_DIR.parent / "output" / "gaze" / "gaze_prediction_model.txt"
+
+GAZE_PATH = DATA_DIR / "au_aggregation.csv"
+TRAIN_SPLIT = DATA_DIR / "splits" / "train_split_Depression_AVEC2017.csv"
+DEV_SPLIT = DATA_DIR / "splits" / "dev_split_Depression_AVEC2017.csv"
+TEST_SPLIT = DATA_DIR / "splits" / "full_test_split.csv"
+
 
 
 # ======================================================
@@ -218,6 +223,13 @@ def run_experiment(feature_path, group_name):
 # ======================================================
 # RUN ALL GROUPS
 # ======================================================
-log_combined, rf_combined = run_experiment(INPUT_PATH, "COMBINED")
-log_listening, rf_listening = run_experiment(INPUT_PATH, "LISTENING")
-log_speaking, rf_speaking = run_experiment(INPUT_PATH, "SPEAKING")
+OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+with open(OUTPUT_PATH, "w") as f:
+    sys.stdout = f
+    log_combined,  rf_combined  = run_experiment(GAZE_PATH, "COMBINED")
+    log_listening, rf_listening = run_experiment(GAZE_PATH, "LISTENING")
+    log_speaking,  rf_speaking  = run_experiment(GAZE_PATH, "SPEAKING")
+    sys.stdout = sys.__stdout__
+
+print(f"Log saved to: {OUTPUT_PATH}")
