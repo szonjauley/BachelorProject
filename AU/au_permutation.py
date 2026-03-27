@@ -5,17 +5,12 @@ from statsmodels.stats.multitest import multipletests
 from pathlib import Path
 import argparse
 
-def prepare_data(file, metric):
-    """
-    Takes file path and reads data 
-    Returns data filtered for relevant metrics
-    """
-
+def prepare_data(file):
     data = pd.read_csv(file)
     data_filtered = data[
-        (data["stat"]==metric) &
-        ~(data["segment_type"]=="all") &
-        ~data["AU"].str.endswith("_c")]
+        ~(data["segment_type"] == "all") &
+        ~data["AU"].str.endswith("_c")
+    ]
     return data_filtered
 
 def permutation_test_interaction(df, n_perm=5000):
@@ -79,19 +74,27 @@ def permutation_test_interaction(df, n_perm=5000):
 
     return results_df
 
-def main(input_file, metric, n_perm, output_folder):
-    data = prepare_data(input_file, metric)
-    results_df = permutation_test_interaction(data, n_perm)
-    output_path = Path(output_folder) / f"permutation_results_{metric}.csv"
+def main(input_file, n_perm, output_folder):
+    data = prepare_data(input_file)
+    results = []
+
+    for metric in ["mean", "std"]:
+        df_metric = data[data["stat"] == metric].copy()
+        res_df = permutation_test_interaction(df_metric, n_perm)
+        res_df["stat"] = metric
+        results.append(res_df)
+
+    results_df = pd.concat(results, ignore_index=True)
+    output_path = Path(output_folder) / "au_permutation.csv"
     results_df.to_csv(output_path, index=False)
     print("Saved:", output_path)
 
 if __name__ == "__main__":
     INPUT_PATH = Path(__file__).parent.parent / "data" / "au_aggregation.csv"
-    OUTPUT_FOLDER = Path(__file__).parent.parent / "data"
+    OUTPUT_FOLDER = Path(__file__).parent.parent / "output" / "AU"
+
     main(
         input_file=INPUT_PATH,
         output_folder=OUTPUT_FOLDER,
-        n_perm=5000,
-        metric="mean"
+        n_perm=5000
     )
