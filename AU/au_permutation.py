@@ -3,7 +3,12 @@ import numpy as np
 import statsmodels.formula.api as smf
 from statsmodels.stats.multitest import multipletests
 from pathlib import Path
-import argparse
+
+# PATHS
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/au
+DATA_DIR = SCRIPT_DIR.parent / "data"  # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" / "au" # BachelorProject/output/au
+INPUT_PATH = DATA_DIR / "au_aggregation.csv" # BachelorProject/data/au_aggregation.csv
 
 def prepare_data(file):
     data = pd.read_csv(file)
@@ -67,9 +72,9 @@ def permutation_test_interaction(df, n_perm=5000):
 
     results_df = pd.DataFrame(results)
 
-    reject, p_fdr, _, _ = multipletests(results_df["p_value"], method="fdr_bh")
+    reject, p_bonf, _, _ = multipletests(results_df["p_value"], method="bonferroni")
 
-    results_df["p_fdr"] = p_fdr
+    results_df["p_bonf"] = p_bonf
     results_df["significant"] = reject
 
     return results_df
@@ -90,11 +95,9 @@ def main(input_file, n_perm, output_folder):
     print("Saved:", output_path)
 
 if __name__ == "__main__":
-    INPUT_PATH = Path(__file__).parent.parent / "data" / "au_aggregation.csv"
-    OUTPUT_FOLDER = Path(__file__).parent.parent / "output" / "AU"
 
     main(
         input_file=INPUT_PATH,
-        output_folder=OUTPUT_FOLDER,
+        output_folder=OUTPUT_DIR,
         n_perm=5000
     )
