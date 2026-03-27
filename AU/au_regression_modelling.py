@@ -4,12 +4,19 @@ import pandas as pd
 import statsmodels.formula.api as smf
 
 # ======================================================
+# PATHS
+# ======================================================
+SCRIPT_DIR = Path(__file__).parent.resolve()
+DATA_DIR = SCRIPT_DIR.parent / "data"
+OUTPUT_DIR = SCRIPT_DIR.parent / "output" / "AU"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+INPUT_FILE = DATA_DIR / "au_aggregation.csv"
+OUTPUT_PATH = SCRIPT_DIR.parent / "output" / "AU"
+
+# ======================================================
 # CONFIGURATION
 # ======================================================
-INPUT_FILE = "au_long.csv"
-OUTPUT_DIR = "interaction_regression_results"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 STATISTICS = ["mean", "std"]
 
 # ======================================================
@@ -63,7 +70,7 @@ for stat in STATISTICS:
             "n": int(model.nobs),
         })
 
-    out_path = os.path.join(OUTPUT_DIR, f"interaction_regression_results_{stat}.csv")
+    out_path = os.path.join(OUTPUT_DIR, f"interaction_regression_{stat}.csv")
     pd.DataFrame(results).to_csv(out_path, index=False)
     print(f"Saved results to {out_path}")
 
