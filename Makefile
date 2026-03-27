@@ -7,6 +7,7 @@ all: dirs
 dirs:
 	mkdir -p data
 	mkdir -p data/splits
+	mkdir -p data/participant_folders
 	mkdir -p output
 	mkdir -p output/au
 	mkdir -p output/gaze
