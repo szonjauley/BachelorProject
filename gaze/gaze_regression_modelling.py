@@ -19,11 +19,11 @@ STATISTICS = ["mean", "std"]
 df = pd.read_csv(INPUT_PATH)
 
 # Keep only speaking and listening rows for the interaction model
-df = df[df["segment"].isin(["speaking", "listening"])].copy()
+df = df[df["segment_type"].isin(["speaking", "listening"])].copy()
 
 # Recode predictors
-df["Depression"] = df["depression"].astype(int)
-df["Role"] = df["segment"].map({"listening": 0, "speaking": 1}).astype(int)
+df["depressed"] = df["depressed"].astype(int)
+df["Role"] = df["segment_type"].map({"listening": 0, "speaking": 1}).astype(int)
 
 # ======================================================
 # RUN REGRESSIONS
@@ -33,18 +33,18 @@ for stat in STATISTICS:
 
     print(f"\nInteraction regression results ({stat}):\n")
 
-    formula = "delta_deg ~ Depression + Role + Depression:Role"
+    formula = "value ~ depressed + Role + depressed:Role"
     model = smf.ols(formula, data=df_stat).fit()
 
-    interaction_p = model.pvalues.get("Depression:Role", None)
+    interaction_p = model.pvalues.get("depressed:Role", None)
 
     print(f"Interaction p-value: {interaction_p:.4f}")
     print(f"R^2: {model.rsquared:.4f}")
 
     if interaction_p > 0.05:
-        print("No evidence that the speaking-listening difference depends on depression status.")
+        print("No evidence that the speaking-listening difference depends on depressed status.")
     else:
-        print("Evidence that the speaking-listening difference depends on depression status.")
+        print("Evidence that the speaking-listening difference depends on depressed status.")
 
     print("-" * 100)
 
@@ -52,7 +52,7 @@ for stat in STATISTICS:
         "stat": stat,
         "interaction_p": interaction_p,
         "r_squared": model.rsquared,
-        "depression_p": model.pvalues.get("Depression", None),
+        "depressed_p": model.pvalues.get("depressed", None),
         "role_p": model.pvalues.get("Role", None),
         "n": int(model.nobs),
     }])
