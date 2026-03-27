@@ -5,8 +5,9 @@ from scipy.stats import shapiro
 # Directory where the current script is located
 SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
 DATA_DIR = SCRIPT_DIR.parent / "data" # BachelorProject/data
+OUTPUT_DIR =SCRIPT_DIR.parent / "output" # BachelorProject/output
 INPUT_PATH = DATA_DIR / "gaze_aggregation.csv" # BachelorProject/data/gaze_aggregation.csv
-OUTPUT_PATH = DATA_DIR / "gaze_normality.csv" # BachelorProject/data/gaze_normality.csv
+OUTPUT_PATH = OUTPUT_DIR / "gaze" / "gaze_normality.csv" # BachelorProject/output/gaze/gaze_normality.csv
 
 def load_data(file:Path) -> pd.DataFrame:
     """
