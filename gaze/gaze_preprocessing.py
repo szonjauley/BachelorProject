@@ -67,6 +67,9 @@ def main(base_folder:Path, depression_file:Path, confidence:float):
     print("Loading data...")
     combined = load_all_data(base_folder, depression_file)
 
+    combined.to_csv(COMBINED_PATH)
+    print(COMBINED_PATH)
+
     print("Cleaning data...")
     cleaned = clean_data(combined, confidence)
 
