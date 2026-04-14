@@ -67,15 +67,11 @@ def permutation_test_interaction(df, n_perm=5000):
         results.append({
             "AU": au,
             "T_obs": T_obs,
-            "p_value": p_value
+            "p_value": p_value,
+            "significant": p_value < (0.05/14)
         })
 
     results_df = pd.DataFrame(results)
-
-    reject, p_bonf, _, _ = multipletests(results_df["p_value"], method="bonferroni")
-
-    results_df["p_bonf"] = p_bonf
-    results_df["significant"] = reject
 
     return results_df
 
