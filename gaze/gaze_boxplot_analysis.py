@@ -22,7 +22,7 @@ def get_group(df, stat, segment_type, depressed=None):
     return subset.copy()
 
 def plot_comparison(df, label_1, label_2, stat, filename,
-                    segment_type_1, segment_type_2, depressed_1=None, depressed_2=None):
+                    segment_type_1, segment_type_2, depressed_1=None, depressed_2=None, y_lim=None):
     df_1 = get_group(df, stat, segment_type_1, depressed_1)
     df_2 = get_group(df, stat, segment_type_2, depressed_2)
 
@@ -36,6 +36,10 @@ def plot_comparison(df, label_1, label_2, stat, filename,
     plt.ylabel("delta_deg")
     plt.xticks(rotation=20)
     plt.title(f"{label_1} vs {label_2} ({stat})")
+
+    if y_lim is not None:
+        plt.ylim(y_lim)
+
     plt.tight_layout()
 
     save_path = os.path.join(OUTPUT_DIR, filename)
@@ -78,7 +82,8 @@ for stat in statS:
             segment_type_1=seg1,
             segment_type_2=seg2,
             depressed_1=dep1,
-            depressed_2=dep2
+            depressed_2=dep2,
+            y_lim=(0, 3),
         )
 
 print("All plots generated successfully.")
