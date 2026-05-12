@@ -171,7 +171,7 @@ Output:
 
 - `gaze_cleaned_labeled_0.7.csv` saved in `data/`
 
-### 3. Preprocess gaze data
+### 3. Create scatter plots for gaze data
 Run:
 
 ```bash
