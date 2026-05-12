@@ -171,7 +171,20 @@ Output:
 
 - `gaze_cleaned_labeled_0.7.csv` saved in `data/`
 
-### 3. Extract gaze features
+### 3. Preprocess gaze data
+Run:
+
+```bash
+python gaze_scatter.py
+```
+
+This script uses `gaze_cleaned_labeled_0.7.csv` to create scatter plots of gaze for each participant.
+
+Output:
+
+- `gaze_scatter_person_XXX.png` saved in `output/gaze/scatter_plots`
+
+### 4. Extract gaze features
 Run:
 
 ```bash
@@ -188,7 +201,7 @@ Outputs:
 
 All files are saved in `data/`.
 
-### 4. Create gaze aggregation file
+### 5. Create gaze aggregation file
 Run:
 
 ```bash
@@ -201,7 +214,7 @@ Output:
 
 - `gaze_aggregation.csv` saved in `data/`
 
-### 5. Check gaze normality
+### 6. Check gaze normality
 Run:
 
 ```bash
@@ -214,7 +227,7 @@ Output:
 
 - `gaze_normality.csv` saved in `output/gaze/`
 
-### 6. Create gaze boxplots
+### 7. Create gaze boxplots
 Run:
 
 ```bash
@@ -227,7 +240,7 @@ Output:
 
 - `boxplots/` folder saved in `output/gaze/`
 
-### 7. Run gaze statistical tests
+### 8. Run gaze statistical tests
 Run:
 
 ```bash
@@ -243,7 +256,7 @@ Output:
   
 Both files are saved in `output/gaze/`.
 
-### 8. Run gaze permutation test
+### 9. Run gaze permutation test
 Run:
 
 ```bash
@@ -256,7 +269,7 @@ Output:
 
 - `gaze_permutation.csv` saved in `output/gaze/`
 
-### 9. Run gaze prediction model
+### 10. Run gaze prediction model
 Run:
 
 ```bash
@@ -296,12 +309,13 @@ Output:
 7. `au_prediction_model.py`
 8. `gaze_label.py`
 9. `gaze_preprocessing.py`
-10. `gaze_features.py`
-11. `gaze_aggregation.py`
-12. `gaze_normality.py`
-13. `gaze_boxplot_analysis.py`
-14. `gaze_statistical_tests.py`
-15. `gaze_permutation.py`
-16. `gaze_prediction_model.py`
+10. `gaze_scatter.py`
+11. `gaze_features.py`
+12. `gaze_aggregation.py`
+13. `gaze_normality.py`
+14. `gaze_boxplot_analysis.py`
+15. `gaze_statistical_tests.py`
+16. `gaze_permutation.py`
+17. `gaze_prediction_model.py`
 
 You can also run the gaze pipeline after running the `au_split_automation.py` file.
