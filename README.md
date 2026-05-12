@@ -119,23 +119,7 @@ Output:
 
 - `au_permutation.csv` saved in `output/au/`
 
-### 7. Run AU regression analysis
-Run:
-
-```bash
-python au_regression_modelling.py
-```
-
-This script uses `au_aggregation.py` output to perform interaction regression on the AU.
-
-Output:
-
-- `au_interaction_regression_mean.csv`
-- `au_interaction_regression_std.csv`
-
-Both files are saved in `output/au/`.
-
-### 8. Run AU prediction model
+### 7. Run AU prediction model
 Run:
 
 ```bash
@@ -272,23 +256,7 @@ Output:
 
 - `gaze_permutation.csv` saved in `output/gaze/`
 
-### 9. Run gaze regression analysis
-Run:
-
-```bash
-python gaze_regression_modelling.py
-```
-
-This script uses `gaze_aggregation.py` output to perform interaction regression on the gaze features.
-
-Output:
-
-- `gaze_interaction_regression_mean.csv`
-- `gaze_interaction_regression_std.csv`
-
-Both files are saved in `gaze/output/`.
-
-### 10. Run gaze prediction model
+### 9. Run gaze prediction model
 Run:
 
 ```bash
@@ -325,18 +293,15 @@ Output:
 4. `au_boxplot_analysis.py`
 5. `au_statistical_tests.py`
 6. `au_permutation.py`
-7. `au_regression_modelling.py`
-8. `au_prediction_model.py`
-9. `gaze_label.py`
-10. `gaze_preprocessing.py`
-11. `gaze_features.py`
-12. `gaze_aggregation.py`
-13. `gaze_normality.py`
-14. `gaze_boxplot_analysis.py`
-15. `gaze_statistical_tests.py`
-16. `gaze_permutation.py`
-17. `gaze_regression_modelling.py`
-18. `gaze_prediction_model.py`
+7. `au_prediction_model.py`
+8. `gaze_label.py`
+9. `gaze_preprocessing.py`
+10. `gaze_features.py`
+11. `gaze_aggregation.py`
+12. `gaze_normality.py`
+13. `gaze_boxplot_analysis.py`
+14. `gaze_statistical_tests.py`
+15. `gaze_permutation.py`
+16. `gaze_prediction_model.py`
 
 You can also run the gaze pipeline after running the `au_split_automation.py` file.
-
