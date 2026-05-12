@@ -2,11 +2,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
-import os
+from pathlib import Path
+
+# Paths
+SCRIPT_DIR = Path(__file__).parent.resolve()   # BachelorProject/gaze
+DATA_DIR   = SCRIPT_DIR.parent / "data"        # BachelorProject/data
+OUTPUT_DIR = SCRIPT_DIR.parent / "output"      # BachelorProject/output
+
+INPUT_PATH  = DATA_DIR / "gaze_cleaned_labeled_0.7.csv"
+OUTPUT_PATH = OUTPUT_DIR / "gaze"
 
 # Load data
-CSV_PATH = "cleaned_gaze_labeled_0.7.csv"
-df = pd.read_csv(CSV_PATH)
+df = pd.read_csv(INPUT_PATH)
 
 # Compute global limits across ALL person IDs
 all_x = pd.concat([df["x_0"], df["x_1"], df["x_h0"], df["x_h1"]])
@@ -18,18 +25,19 @@ def mid(a, b):
     return (a + b) / 2
 
 # Output directory
-out_dir = "gaze_scatter_plots"
-os.makedirs(out_dir, exist_ok=True)
+out_dir = OUTPUT_PATH / "scatter_plots"
+out_dir.mkdir(parents=True, exist_ok=True)
 
-available_ids = sorted(df["person_ID"].unique())
+available_ids = sorted(df["person_id"].unique())
 
 for chosen_id in available_ids:
-    data = df[df["person_ID"] == chosen_id].copy().reset_index(drop=True)
-    depression_label = "Depressed" if data["depression"].iloc[0] == 1 else "Not Depressed"
+    data = df[df["person_id"] == chosen_id].copy().reset_index(drop=True)
+    depression_label = "Depressed" if data["depressed"].iloc[0] == 1 else "Not Depressed"
 
     # Gaze direction
     gx = mid(data["x_0"], data["x_1"])
     gy = mid(data["y_0"], data["y_1"])
+
     # Head direction
     hx = mid(data["x_h0"], data["x_h1"])
     hy = mid(data["y_h0"], data["y_h1"])
@@ -40,7 +48,7 @@ for chosen_id in available_ids:
     colors = cm.Blues(0.2 + 0.8 * t_norm)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-    fig.suptitle(f"Gaze vs Head Direction — Person {chosen_id} ({depression_label})")
+    fig.suptitle(f"Gaze vs Head Direction — Participant {chosen_id} ({depression_label})")
 
     # Gaze 2D scatter with timestamp gradient
     ax1.scatter(gx, gy, c=colors, alpha=0.6, s=5, edgecolors="none")
@@ -61,18 +69,17 @@ for chosen_id in available_ids:
         ax.set_ylim(-global_lim, global_lim)
 
     # Horizontal colorbar below both plots showing actual frame numbers
-    plt.tight_layout(rect=[0, 0.08, 1, 1]) # leave room at bottom for colorbar
-
+    plt.tight_layout(rect=[0, 0.08, 1, 1])
     sm = plt.cm.ScalarMappable(cmap="Blues", norm=plt.Normalize(vmin=0, vmax=n))
     sm.set_array([])
-    cbar_ax = fig.add_axes([0.15, 0.03, 0.7, 0.025]) # [left, bottom, width, height]
+    cbar_ax = fig.add_axes([0.15, 0.03, 0.7, 0.025])
     cbar = fig.colorbar(sm, cax=cbar_ax, orientation="horizontal")
     cbar.set_label("Frame (early → late)")
     tick_positions = np.linspace(0, n, 6).astype(int)
     cbar.set_ticks(tick_positions)
     cbar.set_ticklabels(tick_positions)
 
-    out_path = os.path.join(out_dir, f"gaze_scatter_person_{chosen_id}.png")
+    out_path = out_dir / f"gaze_scatter_person_{chosen_id}.png"
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
 
