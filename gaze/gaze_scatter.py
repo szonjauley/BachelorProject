@@ -5,9 +5,9 @@ import numpy as np
 from pathlib import Path
 
 # Paths
-SCRIPT_DIR = Path(__file__).parent.resolve()   # BachelorProject/gaze
-DATA_DIR   = SCRIPT_DIR.parent / "data"        # BachelorProject/data
-OUTPUT_DIR = SCRIPT_DIR.parent / "output"      # BachelorProject/output
+SCRIPT_DIR = Path(__file__).parent.resolve() # BachelorProject/gaze
+DATA_DIR   = SCRIPT_DIR.parent / "data" # BachelorProject/data
+OUTPUT_DIR = SCRIPT_DIR.parent / "output" # BachelorProject/output
 
 INPUT_PATH  = DATA_DIR / "gaze_cleaned_labeled_0.7.csv"
 OUTPUT_PATH = OUTPUT_DIR / "gaze"
