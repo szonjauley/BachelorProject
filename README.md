@@ -301,22 +301,23 @@ Output:
 ## Suggested Run Order
 
 0. `pip install -r requirements.txt`
-1. `au_split_automation.py`
-2. `au_aggregation.py`
-3. `au_normality.py`
-4. `au_boxplot_analysis.py`
-5. `au_statistical_tests.py`
-6. `au_permutation.py`
-7. `au_prediction_model.py`
-8. `gaze_label.py`
-9. `gaze_preprocessing.py`
-10. `gaze_scatter.py`
-11. `gaze_features.py`
-12. `gaze_aggregation.py`
-13. `gaze_normality.py`
-14. `gaze_boxplot_analysis.py`
-15. `gaze_statistical_tests.py`
-16. `gaze_permutation.py`
-17. `gaze_prediction_model.py`
+1. `make`
+2. `au_split_automation.py`
+3. `au_aggregation.py`
+4. `au_normality.py`
+5. `au_boxplot_analysis.py`
+6. `au_statistical_tests.py`
+7. `au_permutation.py`
+8. `au_prediction_model.py`
+9. `gaze_label.py`
+10. `gaze_preprocessing.py`
+11. `gaze_scatter.py`
+12. `gaze_features.py`
+13. `gaze_aggregation.py`
+14. `gaze_normality.py`
+15. `gaze_boxplot_analysis.py`
+16. `gaze_statistical_tests.py`
+17. `gaze_permutation.py`
+18. `gaze_prediction_model.py`
 
 You can also run the gaze pipeline after running the `au_split_automation.py` file.
