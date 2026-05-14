@@ -300,6 +300,7 @@ Output:
 
 ## Suggested Run Order
 
+0. `pip install -r requirements.txt`
 1. `au_split_automation.py`
 2. `au_aggregation.py`
 3. `au_normality.py`
